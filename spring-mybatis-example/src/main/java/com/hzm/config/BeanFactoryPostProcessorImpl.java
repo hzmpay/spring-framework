@@ -1,6 +1,6 @@
-package hzm.config;
+package com.hzm.config;
 
-import hzm.bean.DemoBean2;
+import com.hzm.bean.DemoBean2;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
