@@ -955,10 +955,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				// 此时可能存在其他线程正在遍历beanDefinitionNames并且使用迭代器，此时如果进行add操作会触发fail-fast
 				// 加锁，因为此时是创建一个新的beanDefinitionNames集合进行引用替换的，
-				// 不加锁会存在引用覆盖问题，导致先注册的beanDefinitionName丢失
+				// 不加锁会存在引用覆盖问题，导致beanDefinitionNames先注册的beanDefinitionName丢失
 				synchronized (this.beanDefinitionMap) {
 					this.beanDefinitionMap.put(beanName, beanDefinition);
 					// 创建一个新的beanDefinitionNames进行add防止fail-fast
+					// TODO 这里用到了CopyOnWrite思想，beanDefinitionNames是否可考虑替换成CopyOnWriteArrayList
 					List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
 					updatedDefinitions.addAll(this.beanDefinitionNames);
 					updatedDefinitions.add(beanName);
@@ -971,12 +972,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				// 此处并发情况下会存在重复put，所以用beanDefinitionMap是ConcurrentHashMap
 				// Still in startup registration phase
 				this.beanDefinitionMap.put(beanName, beanDefinition);
-				// TODO 进到这段代码，说明之前beanName已经注册过了，beanDefinitionNames里面应该有，为什么还要add一次？
+				// TODO 是否会有fail-fast问题？
 				this.beanDefinitionNames.add(beanName);
 				// 删除手动注册的单例BeanName，因为这个BeanName之前已经注册过了
 				removeManualSingletonName(beanName);
 			}
-			// TODO ？？
+			// TODO 不懂
 			this.frozenBeanDefinitionNames = null;
 		}
 

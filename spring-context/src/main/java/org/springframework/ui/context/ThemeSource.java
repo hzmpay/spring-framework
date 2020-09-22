@@ -23,6 +23,9 @@ import org.springframework.lang.Nullable;
  * This enables parameterization and internationalization of messages
  * for a given 'theme'.
  *
+ * 返回给定主题名称的主题实例。
+ * 返回的主题将解析特定于主题的消息、代码、文件路径等(如web环境中的CSS和图像文件)。
+ *
  * @author Jean-Pierre Pawlak
  * @author Juergen Hoeller
  * @see Theme

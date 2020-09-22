@@ -265,7 +265,7 @@ public abstract class AnnotationConfigUtils {
 	}
 
 	/**
-	 * 根据BeanDefinition的Scope代理返回BeanDefinitionHolder或生成新的BeanDefinitionHolder
+	 * 根据BeanDefinition的Scope代理返回BeanDefinitionHolder或生成新的BeanDefinitionHolder代理返回
 	 *
 	 * @param metadata
 	 * @param definition

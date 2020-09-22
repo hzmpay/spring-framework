@@ -267,7 +267,7 @@ public class AnnotatedBeanDefinitionReader {
 		// 不传则自动生成BeanName
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
-		// 对一些Bean的一些通用注解进行赋值
+		// 对一些Bean的一些通用注解进行BeanDefinition赋值
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
@@ -290,6 +290,7 @@ public class AnnotatedBeanDefinitionReader {
 
 		// 创建BeanDefinition的持有者
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		// 根据BeanDefinition的Scope代理返回BeanDefinitionHolder或生成新的BeanDefinitionHolder代理返回
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
