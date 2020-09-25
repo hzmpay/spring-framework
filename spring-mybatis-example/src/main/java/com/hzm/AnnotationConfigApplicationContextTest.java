@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @version 1.0
  * @date 2020年09月13日
  */
-public class Test {
+public class AnnotationConfigApplicationContextTest {
 
 	public static void main(String[] args) {
 

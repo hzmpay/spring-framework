@@ -32,6 +32,7 @@ import org.springframework.lang.Nullable;
  * 接口，由能够管理大量ApplicationListener对象并向它们发布事件的对象实现。
  * 一个org.springframework.context。ApplicationEventPublisher，通常是Spring org.springframework.context。ApplicationContext，
  * 可以使用ApplicationEventMulticaster作为实际发布事件的委托。
+ * （相当于事件广播器，1.管理监听器；2.发布事件对象）
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
@@ -75,6 +76,9 @@ public interface ApplicationEventMulticaster {
 	 * Multicast the given application event to appropriate listeners.
 	 * <p>Consider using {@link #multicastEvent(ApplicationEvent, ResolvableType)}
 	 * if possible as it provides better support for generics-based events.
+	 *
+	 * 广播给定的应用程序事件到适当的监听器。
+	 * 如果可能的话，考虑使用multicastEvent(ApplicationEvent, ResolvableType)，因为它为基于泛型的事件提供了更好的支持。
 	 * @param event the event to multicast
 	 */
 	void multicastEvent(ApplicationEvent event);

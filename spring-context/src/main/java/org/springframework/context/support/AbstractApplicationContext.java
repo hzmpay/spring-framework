@@ -127,6 +127,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	static {
 		// Eagerly load the ContextClosedEvent class to avoid weird classloader issues
 		// on application shutdown in WebLogic 8.1. (Reported by Dustin Woods.)
+		// 为了避免应用程序在WebLogic 8.1关闭时出现奇怪的类加载器问题，
+		// 加载IOC容器关闭类。(来自 达斯汀·伍兹)
 		ContextClosedEvent.class.getName();
 	}
 
@@ -191,11 +193,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/** Statically specified listeners. */
 	private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
 
-	/** Local listeners registered before refresh. */
+	/**
+	 * Local listeners registered before refresh.
+	 * 在刷新之前注册了本地监听器
+	 */
 	@Nullable
 	private Set<ApplicationListener<?>> earlyApplicationListeners;
 
-	/** ApplicationEvents published before the multicaster setup. */
+	/**
+	 * ApplicationEvents published before the multicaster setup.
+	 * 在事件广播器
+	 */
 	@Nullable
 	private Set<ApplicationEvent> earlyApplicationEvents;
 
@@ -204,6 +212,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Create a new AbstractApplicationContext with no parent.
 	 */
 	public AbstractApplicationContext() {
+		// 无参构造
 		this.resourcePatternResolver = getResourcePatternResolver();
 	}
 
@@ -428,11 +437,20 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p><b>Do not call this when needing to resolve a location pattern.</b>
 	 * Call the context's {@code getResources} method instead, which
 	 * will delegate to the ResourcePatternResolver.
+	 *
+	 * 获取一个资源加载器ResourcePatternResolver用于读取Spring Bean的配置信息。
+	 * 默认：org.springframework.core.io.support.PathMatchingResourcePatternResolver
+	 * 支持Ant-style的路径匹配规则
+	 * 可以在子类中重写，用于扩展的解决策略，例如在web环境中。
+	 * 当需要解析路径匹配时，不要调用它。
+	 * 相反，调用上下文的getResources方法，该方法将委托给ResourcePatternResolver
+	 *
 	 * @return the ResourcePatternResolver for this context
 	 * @see #getResources
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
 	 */
 	protected ResourcePatternResolver getResourcePatternResolver() {
+		// AbstractApplicationContext继承于DefaultResourceLoader，所以本身也是一个资源加载器
 		return new PathMatchingResourcePatternResolver(this);
 	}
 
@@ -494,11 +512,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
-			// 准备这个上下文以进行刷新、设置它的启动日期和活动标志以及执行属性源的任何初始化（比如设置空list初始化）。
+			// 上下文刷新前置处理、设置它的启动日期和活动状态标志（已启动标识）以及早期监听器和时间发布器初始化
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 告诉子类刷新内部工厂
+			// 告诉子类启动refreshBeanFactory()方法，
+			// Bean定义资源文件的载入从子类的refreshBeanFactory()方法启动
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
@@ -576,6 +595,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareRefresh() {
 		// Switch to active.
+		// 转换成活动状态
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
 		this.active.set(true);
@@ -590,13 +610,16 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		// 初始化上下文环境中的任何占位符属性，替换成实际的值。
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
+		// 验证所有标记为必需的属性都是可解析的:
 		// see ConfigurablePropertyResolver#setRequiredProperties
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
+		// 存储提前刷新的 ApplicationListeners
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
@@ -608,6 +631,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Allow for the collection of early ApplicationEvents,
 		// to be published once the multicaster is available...
+		// 允许收集早期的ApplicationEvents，一旦multicaster（事件广播器）可用就发布（如：ApplicationEventMulticaster）
 		this.earlyApplicationEvents = new LinkedHashSet<>();
 	}
 
@@ -618,6 +642,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void initPropertySources() {
 		// For subclasses: do nothing by default.
+		// 留给子类实现
+		// 目前子类实现的最终都是调用：WebApplicationContextUtils.initServletPropertySources
 	}
 
 	/**
