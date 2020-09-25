@@ -1,9 +1,8 @@
 package com.hzm;
 
 import com.hzm.config.HzmConfig;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.util.Arrays;
 
 /**
  * @author Hezeming
@@ -20,8 +19,11 @@ public class Test {
 		// 注入类型
 //		genericBeanDefinition.setAutowireMode(BeanDefinition.);
 //		genericBeanDefinition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+//		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
 
+		final ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+
+		System.out.println(context.getBean("&DemoBean1"));
 
 
 	}

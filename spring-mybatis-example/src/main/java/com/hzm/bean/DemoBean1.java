@@ -7,7 +7,18 @@ package com.hzm.bean;
  */
 public class DemoBean1 {
 
+	private String name;
+
 	public DemoBean1() {
+		name = "default" + DemoBean1.class.getSimpleName();
+		System.out.println(getClass() + " create");
+	}
+
+	public DemoBean1(String name) {
+		this.name = name;
+		if (name == null) {
+			name = "default" + DemoBean1.class.getSimpleName();
+		}
 		System.out.println(getClass() + " create");
 	}
 

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020年09月13日
  */
 @Configuration
-@ComponentScan("hzm.bean")
+@ComponentScan("com.hzm.bean")
 public class HzmConfig {
 
 }

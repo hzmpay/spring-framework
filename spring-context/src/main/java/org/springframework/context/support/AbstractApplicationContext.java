@@ -154,7 +154,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/** System time in milliseconds when this context started. */
 	private long startupDate;
 
-	/** Flag that indicates whether this context is currently active. */
+	/**
+	 * Flag that indicates whether this context is currently active.
+	 * 指示此上下文当前是否处于活动状态的标志
+	 */
 	private final AtomicBoolean active = new AtomicBoolean();
 
 	/** Flag that indicates whether this context has been closed already. */
@@ -538,6 +541,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 调用LifecycleProcessor的onRefresh()方法并发布ContextRefreshedEvent，完成上下文的刷新。
 				finishRefresh();
 			}
 
@@ -548,6 +552,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
+				// 销毁已经创建的单例，以避免悬空资源。
 				destroyBeans();
 
 				// Reset 'active' flag.
