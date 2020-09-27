@@ -16,20 +16,6 @@
 
 package org.springframework.web.context.support;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.env.MutablePropertySources;
@@ -39,13 +25,20 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.RequestScope;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.SessionScope;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.*;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Convenience methods for retrieving the root {@link WebApplicationContext} for
@@ -177,6 +170,9 @@ public abstract class WebApplicationContextUtils {
 	/**
 	 * Register web-specific scopes ("request", "session", "globalSession", "application")
 	 * with the given BeanFactory, as used by the WebApplicationContext.
+	 *
+	 * 用给定的BeanFactory注册特定于web的范围("request", "session", "globalSession", "application")，就像WebApplicationContext所使用的那样。
+	 *
 	 * @param beanFactory the BeanFactory to configure
 	 * @param sc the ServletContext that we're running within
 	 */
@@ -189,9 +185,11 @@ public abstract class WebApplicationContextUtils {
 			ServletContextScope appScope = new ServletContextScope(sc);
 			beanFactory.registerScope(WebApplicationContext.SCOPE_APPLICATION, appScope);
 			// Register as ServletContext attribute, for ContextCleanupListener to detect it.
+			// 注册为ServletContext属性，以便ContextCleanupListener检测它。
 			sc.setAttribute(ServletContextScope.class.getName(), appScope);
 		}
 
+		// 注册解析依赖工厂
 		beanFactory.registerResolvableDependency(ServletRequest.class, new RequestObjectFactory());
 		beanFactory.registerResolvableDependency(ServletResponse.class, new ResponseObjectFactory());
 		beanFactory.registerResolvableDependency(HttpSession.class, new SessionObjectFactory());
@@ -214,6 +212,9 @@ public abstract class WebApplicationContextUtils {
 	/**
 	 * Register web-specific environment beans ("contextParameters", "contextAttributes")
 	 * with the given BeanFactory, as used by the WebApplicationContext.
+	 *
+	 * 向给定的BeanFactory注册特定于web的环境bean(“contextParameters”、“contextAttributes”)，就像WebApplicationContext所使用的那样。
+	 *
 	 * @param bf the BeanFactory to configure
 	 * @param servletContext the ServletContext that we're running within
 	 * @param servletConfig the ServletConfig

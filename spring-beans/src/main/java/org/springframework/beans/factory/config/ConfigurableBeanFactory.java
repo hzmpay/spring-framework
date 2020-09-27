@@ -16,9 +16,6 @@
 
 package org.springframework.beans.factory.config;
 
-import java.beans.PropertyEditor;
-import java.security.AccessControlContext;
-
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.TypeConverter;
@@ -29,6 +26,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
+
+import java.beans.PropertyEditor;
+import java.security.AccessControlContext;
 
 /**
  * Configuration interface to be implemented by most bean factories. Provides
@@ -240,6 +240,12 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	 * {@link org.springframework.core.Ordered} interface will be ignored. Note
 	 * that autodetected post-processors (e.g. as beans in an ApplicationContext)
 	 * will always be applied after programmatically registered ones.
+	 *
+	 * 添加一个新的BeanPostProcessor，它将应用于该工厂创建的bean。在工厂配置期间调用。
+	 * 注:此处提交的post-processors将按注册顺序申请;
+	 * 通过实现org.springframework.core.Ordered接口表示的任何排序语义都将被忽略。
+	 * 注意，自动检测的post-processors(如ApplicationContext中的bean)总是在以编程方式注册的后处理器之后应用。
+	 *
 	 * @param beanPostProcessor the post-processor to register
 	 */
 	void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);

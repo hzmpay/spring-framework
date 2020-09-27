@@ -49,6 +49,14 @@ public interface SingletonBeanRegistry {
 	 * for runtime registration of singletons. As a consequence, a registry
 	 * implementation should synchronize singleton access; it will have to do
 	 * this anyway if it supports a BeanFactory's lazy initialization of singletons.
+	 *
+	 * 在bean-registry中将给定的现有对象注册为单例对象，并使用给定的bean名称。
+	 * 这个传入的Bean实例应该被完全初始化；
+	 * 本次注册仅仅是在Map里面进行标记，不会进行初始化Bean和销毁Bean之类的处理
+	 *
+	 * 通常在注册配置类期间调用，但也可以用于运行时单例的注册。
+	 * 因此，注册表实现应该同步单例访问;如果它支持BeanFactory对单例的延迟初始化，那么无论如何它都必须这样做。
+	 *
 	 * @param beanName the name of the bean
 	 * @param singletonObject the existing singleton object
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
