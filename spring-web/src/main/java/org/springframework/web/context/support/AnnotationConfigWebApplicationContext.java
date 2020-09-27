@@ -220,16 +220,18 @@ public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWe
 			reader.register(ClassUtils.toClassArray(this.componentClasses));
 		}
 
-		// 注册
+		// 注册扫描包路径下的类
 		if (!this.basePackages.isEmpty()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Scanning base packages: [" +
 						StringUtils.collectionToCommaDelimitedString(this.basePackages) + "]");
 			}
+			// 扫描包路径下的Bean并注册
 			scanner.scan(StringUtils.toStringArray(this.basePackages));
 		}
 
 		String[] configLocations = getConfigLocations();
+		// 注册配置类
 		if (configLocations != null) {
 			for (String configLocation : configLocations) {
 				try {
