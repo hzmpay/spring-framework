@@ -16,8 +16,6 @@
 
 package org.springframework.context.support;
 
-import java.io.IOException;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
@@ -25,6 +23,8 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
+
+import java.io.IOException;
 
 /**
  * Convenient base class for {@link org.springframework.context.ApplicationContext}
@@ -79,18 +79,23 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
-		// Create a new XmlBeanDefinitionReader for the given BeanFactory.
+		// 创建BeanDefinition读取器
 		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
 
 		// Configure the bean definition reader with this context's
 		// resource loading environment.
+		// 给BeanDefinition读取器设置Spring资源加载器
 		beanDefinitionReader.setEnvironment(this.getEnvironment());
+		// AbstractXmlApplicationContext的祖先父类AbstractApplicationContext继承了DefaultResourceLoader
+		// 所以本身也是一个资源加载器
 		beanDefinitionReader.setResourceLoader(this);
+		// 给BeanDefinition读取器设置SAX xml解析器
 		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
 
-		// Allow a subclass to provide custom initialization of the reader,
-		// then proceed with actually loading the bean definitions.
+		// 这里用到了委派模式，默认实现只是启用了xml校验机制
+		// 允许子类提供BeanDefinition读取器的自定义初始化，然后继续实际加载bean定义
 		initBeanDefinitionReader(beanDefinitionReader);
+		// 加载BeanDefinition读取器
 		loadBeanDefinitions(beanDefinitionReader);
 	}
 
@@ -99,6 +104,10 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 * definitions of this context. Default implementation is empty.
 	 * <p>Can be overridden in subclasses, e.g. for turning off XML validation
 	 * or using a different XmlBeanDefinitionParser implementation.
+	 *
+	 * 初始化用于加载此上下文的bean定义的bean定义读取器。默认实现为空。
+	 * 可以在子类中重写，例如用于关闭XML验证或使用不同的XmlBeanDefinitionParser实现。
+	 *
 	 * @param reader the bean definition reader used by this context
 	 * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader#setDocumentReaderClass
 	 */
@@ -110,6 +119,10 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 * Load the bean definitions with the given XmlBeanDefinitionReader.
 	 * <p>The lifecycle of the bean factory is handled by the {@link #refreshBeanFactory}
 	 * method; hence this method is just supposed to load and/or register bean definitions.
+	 *
+	 * 使用给定的XmlBeanDefinitionReader加载beanDefinition。
+	 * bean工厂的生命周期由refreshBeanFactory方法处理;因此，该方法仅用于加载和/或注册bean定义。
+	 *
 	 * @param reader the XmlBeanDefinitionReader to use
 	 * @throws BeansException in case of bean registration errors
 	 * @throws IOException if the required XML document isn't found

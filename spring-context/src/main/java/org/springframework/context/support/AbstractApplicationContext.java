@@ -202,7 +202,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/**
 	 * ApplicationEvents published before the multicaster setup.
-	 * 在事件广播器
+	 * ApplicationEvents在多播机设置之前发布
 	 */
 	@Nullable
 	private Set<ApplicationEvent> earlyApplicationEvents;
@@ -383,6 +383,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Multicast right now if possible - or lazily once the multicaster is initialized
+		// 如果可能的话，现在就进行组播——或者在组播初始化后延迟
 		if (this.earlyApplicationEvents != null) {
 			this.earlyApplicationEvents.add(applicationEvent);
 		}
@@ -511,56 +512,47 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.
-			// 上下文刷新前置处理、设置它的启动日期和活动状态标志（已启动标识）以及早期监听器和时间发布器初始化
+			// 1.上下文刷新前置处理、设置它的启动日期和活动状态标志（已启动标识）以及早期监听器和时间发布器初始化
 			prepareRefresh();
 
-			// Tell the subclass to refresh the internal bean factory.
 			// 告诉子类启动refreshBeanFactory()方法，
 			// Bean定义资源文件的载入从子类的refreshBeanFactory()方法启动
+			// 2.创建并刷新BeanFactory返回
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// Prepare the bean factory for use in this context.
-			// 配置工厂的标准上下文特征，例如：上下文的类加载器和后处理器。
+			// 3.配置工厂的标准上下文特征，例如：上下文的类加载器和后处理器。
 			prepareBeanFactory(beanFactory);
 
 			try {
-				// Allows post-processing of the bean factory in context subclasses.
-				// 允许在context子类中对bean工厂进行后处理。
+				// 4.允许在context子类中对bean工厂进行创建后置处理。比如：注册WEB相关信息
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context
-				// 调用上下文中注册为bean的工厂处理器
-				// 实例化和调用所有注册的BeanFactoryPostProcessor bean，如果给定了显式的顺序，必须在单例实例化之前调用。
+				// 5.调用上下文中注册为BeanFactoryPostProcessor的bean
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// Register bean processors that intercept bean creation.
-				// 为BeanFactory注册Bean事件处理器. BeanPostProcessor是Bean后置处理器，用于监听容器触发的事件
+				// 6.为BeanFactory注册Bean后置处理器.在Bean创建之后才进行调用
+				// BeanPostProcessor是Bean后置处理器，用于监听容器触发的事件
 				registerBeanPostProcessors(beanFactory);
 
-				// Initialize message source for this context.
-				// 初始化MessageSource。如果在此上下文中没有定义，则使用父类的
+				// 7.初始化MessageSource。父类有默认实现，子类可重写（国际化相关）
 				initMessageSource();
 
-				// Initialize event multicaster for this context.
-				// 初始化ApplicationEventMulticaster事件传播器（ApplicationListener，ApplicationEvent等的装载容器）
+				// 8.初始化ApplicationEventMulticaster事件广播器（ApplicationListener，ApplicationEvent等的装载容器）
 				initApplicationEventMulticaster();
 
-				// Initialize other special beans in specific context subclasses.
-				// 初始化特定上下文子类中的其他特殊bean
+				// 9.初始化特定上下文子类中的其他特殊bean
 				onRefresh();
 
-				// Check for listener beans and register them.
-				// 将listener监听bean注册到applicationEventMulticaster中
-				// applicationEventMulticaster：上面initApplicationEventMulticaster()所注册的传播器
+				// 10.将listener监听bean注册到applicationEventMulticaster事件广播器中
+				// applicationEventMulticaster：上面initApplicationEventMulticaster()所注册的事件广播器
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 完成这个上下文bean工厂的初始化，初始化所有剩余的单例bean
+				// 11.初始化所有剩余的单例非懒加载bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
-				// 调用LifecycleProcessor的onRefresh()方法并发布ContextRefreshedEvent，完成上下文的刷新。
+				// 12.调用LifecycleProcessor的onRefresh()方法并发布ContextRefreshedEvent，完成上下文的刷新。
 				finishRefresh();
 			}
 
@@ -575,6 +567,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				destroyBeans();
 
 				// Reset 'active' flag.
+				// 重置已启动标识
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -584,6 +577,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			finally {
 				// Reset common introspection caches in Spring's core, since we
 				// might not ever need metadata for singleton beans anymore...
+				// 清除Spring中的内置缓存，因为我们已经不需要单例bean的元数据了
 				resetCommonCaches();
 			}
 		}
@@ -653,6 +647,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		// 调用子类的refreshBeanFactory完成Bean的创建及BeanDefinition的创建加载
+		// 这里用到了委派模式，父类定义抽象方法refreshBeanFactory()交由子类处理
 		refreshBeanFactory();
 		return getBeanFactory();
 	}
@@ -882,7 +878,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let post-processors apply to them!
-		// 不要在这里初始化factorybean:我们需要保留所有常规bean
+		// 不要在这里初始化FactoryBean:我们需要保留所有常规bean
 		// 未初始化，让后处理器应用到它们!
 		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
 		for (String listenerBeanName : listenerBeanNames) {
@@ -903,9 +899,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * Finish the initialization of this context's bean factory,
 	 * initializing all remaining singleton beans.
+	 *
+	 * 完成这个上下文bean工厂的初始化，初始化所有剩余的单例bean
+	 *
 	 */
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
-		// Initialize conversion service for this context.
+		// 在context中初始化转换器conversionService并设置到beanFactory中
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
 				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
 			beanFactory.setConversionService(
@@ -939,6 +938,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Finish the refresh of this context, invoking the LifecycleProcessor's
 	 * onRefresh() method and publishing the
 	 * {@link org.springframework.context.event.ContextRefreshedEvent}.
+	 *
+	 * 完成这个context的最终刷新，调用LifecycleProcessor的onRefresh()方法并发布事件ContextRefreshedEvent
+	 *
 	 */
 	protected void finishRefresh() {
 		// Clear context-level resource caches (such as ASM metadata from scanning).
