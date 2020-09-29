@@ -77,6 +77,7 @@ public abstract class AbstractBeanDefinitionParser implements BeanDefinitionPars
 					}
 				}
 				BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, id, aliases);
+				// 注册BeanDefinition
 				registerBeanDefinition(holder, parserContext.getRegistry());
 				if (shouldFireEvents()) {
 					BeanComponentDefinition componentDefinition = new BeanComponentDefinition(holder);
@@ -131,6 +132,11 @@ public abstract class AbstractBeanDefinitionParser implements BeanDefinitionPars
 	 * with the supplied {@link BeanDefinitionRegistry registry} only if the {@code isNested}
 	 * parameter is {@code false}, because one typically does not want inner beans
 	 * to be registered as top level beans.
+	 *
+	 * 将提供的bean注册到提供的注册中心。
+	 * 子类可以重写这个方法来控制是否实际注册了所提供的bean，或者注册更多的bean。
+	 * 只有当isNested参数为false时，缺省实现才会将提供的bean注册为提供的注册中心，因为通常不希望将内部bean注册为顶级bean。
+	 *
 	 * @param definition the bean definition to be registered
 	 * @param registry the registry that the bean is to be registered with
 	 * @see BeanDefinitionReaderUtils#registerBeanDefinition(BeanDefinitionHolder, BeanDefinitionRegistry)
@@ -196,6 +202,10 @@ public abstract class AbstractBeanDefinitionParser implements BeanDefinitionPars
 	 * Override this to return {@code false} in order to suppress the event.
 	 * @return {@code true} in order to fire a component registration event
 	 * after parsing the bean definition; {@code false} to suppress the event
+	 *
+	 * 确定该解析器在解析bean定义之后是否应该触发BeanComponentDefinition事件。
+	 * 这个实现在默认情况下返回true;也就是说，当bean定义被完全解析后，将触发一个事件。重写此值以返回false以抑制该事件。
+	 *
 	 * @see #postProcessComponentDefinition
 	 * @see org.springframework.beans.factory.parsing.ReaderContext#fireComponentRegistered
 	 */

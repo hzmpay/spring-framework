@@ -54,11 +54,11 @@ import java.util.function.Supplier;
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
 	/**
-	 * 读取注解BeanDefinition的读取器
+	 * 读取注解BeanDefinition读取器，读取并注册BeanDefinition
 	 */
 	private final AnnotatedBeanDefinitionReader reader;
 	/**
-	 * 扫描指定类路径中注解Bean定义的扫描器
+	 * BeanDefinition扫描器，扫描指定类路径下注解的Bean
 	 */
 	private final ClassPathBeanDefinitionScanner scanner;
 
@@ -131,6 +131,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * <p>Default is {@link AnnotationBeanNameGenerator}.
 	 * <p>Any call to this method must occur prior to calls to {@link #register(Class...)}
 	 * and/or {@link #scan(String...)}.
+	 *
+	 * 提供一个自定义BeanNameGenerator，以便与AnnotatedBeanDefinitionReader和/或ClassPathBeanDefinitionScanner(如果有的话)一起使用。
+	 * 默认是AnnotationBeanNameGenerator。
+	 * 对这个方法的任何调用都必须发生在对register(Class…)和/或scan(String…)方法的调用之前。
 	 *
 	 * @see AnnotatedBeanDefinitionReader#setBeanNameGenerator
 	 * @see ClassPathBeanDefinitionScanner#setBeanNameGenerator

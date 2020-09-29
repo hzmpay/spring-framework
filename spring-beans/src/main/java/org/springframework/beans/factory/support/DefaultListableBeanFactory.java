@@ -151,7 +151,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 	/**
 	 * Whether bean definition metadata may be cached for all beans.
-	 * 是否可以为所有bean缓存bean定义元数据。
+	 * 是否可以为所有bean缓存beanDefinition元数据。
 	 */
 	private volatile boolean configurationFrozen;
 
@@ -930,6 +930,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							existingDefinition + "] with [" + beanDefinition + "]");
 				}
 			}
+			// 原来baneName对应的beanDefinition和现在注册的beanDefinition不是同一个对象
 			else if (!beanDefinition.equals(existingDefinition)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Overriding bean definition for bean '" + beanName +

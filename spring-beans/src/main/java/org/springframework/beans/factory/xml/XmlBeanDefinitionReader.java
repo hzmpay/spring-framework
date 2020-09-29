@@ -321,9 +321,20 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		// 定义了一个ThreadLocal来解决循环加载问题，防止资源重复加载
 		// 因为资源是通过外部定义的location路径去扫描出来的，可能存在扫描的资源有重复
 		// 外部可能是扫描出多个encodedResource然后循环调用
-		// TODO 疑问：这块为什么用ThreadLocal处理，只能防止单线程重复加载，而不是定义一个外部的静态Map或者Set进行处理，XML资源默认是固定，
+		// TODO 疑问：这块为什么用ThreadLocal处理，只能防止当前线程重复加载，而不是定义一个外部的静态Map或者Set进行处理，XML资源默认是固定，
 		//  读取之后的Resource已经生成了BeanDefinition在IOC容器中了，如果采用公共Map或者Set处理还可以防止多线程重复加载，性能有提升
 		// 猜想：是为了修改xml以后重新加载获取最新的xml实现热部署效果？
+		// 提了issue #25832
+		// TODO jhoeller回复：
+		//  This is only really meant to detect cyclic import definitions within the current thread.
+		//  Since there is usually a primary startup thread, it is sufficient to do this in a thread-local manner.
+		//  Other threads may load the same resources at other times, potentially picking up updated files there,
+		//  and getting the same thread-local cycle detection for their individual loading attempt.
+		// 这实际上只是为了检测当前线程中的循环导入定义。
+		// 因为通常有一个主启动线程，所以以线程本地的方式完成这个工作就足够了。
+		// 其他线程可能会在其他时间加载相同的资源，可能会在那里获取更新后的文件，并对它们各自的加载尝试进行相同的线程本地周期检测。
+
+		// 结论：和猜想的结果一样，不定义外部Set为了配置文件可以外部进行热部署
 		Set<EncodedResource> currentResources = this.resourcesCurrentlyBeingLoaded.get();
 
 		if (!currentResources.add(encodedResource)) {
@@ -377,6 +388,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
 	/**
 	 * Actually load bean definitions from the specified XML file.
+	 *
+	 * 实际从指定的XML文件中加载beanDefinition
+	 *
 	 * @param inputSource the SAX InputSource to read from
 	 * @param resource the resource descriptor for the XML file
 	 * @return the number of bean definitions found
@@ -388,7 +402,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			throws BeanDefinitionStoreException {
 
 		try {
+			// 根据资源流读取xml文件转为Document对象
 			Document doc = doLoadDocument(inputSource, resource);
+			// 将Document转换成BeanDefinition并加载
 			int count = registerBeanDefinitions(doc, resource);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loaded " + count + " bean definitions from " + resource);
@@ -507,8 +523,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see BeanDefinitionDocumentReader#registerBeanDefinitions
 	 */
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+		// 创建Document类型的BeanDefinition读取器
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		int countBefore = getRegistry().getBeanDefinitionCount();
+		// 读取器读取Document内容并转化为BeanDefinition注册
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
