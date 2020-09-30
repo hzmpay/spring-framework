@@ -170,6 +170,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * to fully process the new classes.
 	 * 注册一个或多个要处理的组件类。
 	 * 请注意，必须调用refresh()，以便上下文完全处理新类。
+	 * refresh只能调用一次，GenericApplicationContext.refreshBeanFactory()限制了
 	 *
 	 * @param componentClasses one or more component classes &mdash; for example,
 	 *                         {@link Configuration @Configuration} classes

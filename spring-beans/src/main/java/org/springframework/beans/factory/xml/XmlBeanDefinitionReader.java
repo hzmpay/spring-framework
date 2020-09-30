@@ -324,8 +324,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		// TODO 疑问：这块为什么用ThreadLocal处理，只能防止当前线程重复加载，而不是定义一个外部的静态Map或者Set进行处理，XML资源默认是固定，
 		//  读取之后的Resource已经生成了BeanDefinition在IOC容器中了，如果采用公共Map或者Set处理还可以防止多线程重复加载，性能有提升
 		// 猜想：是为了修改xml以后重新加载获取最新的xml实现热部署效果？
-		// 提了issue #25832
-		// TODO jhoeller回复：
+		// TODO 提了issue #25832
+		//  jhoeller回复：
 		//  This is only really meant to detect cyclic import definitions within the current thread.
 		//  Since there is usually a primary startup thread, it is sufficient to do this in a thread-local manner.
 		//  Other threads may load the same resources at other times, potentially picking up updated files there,

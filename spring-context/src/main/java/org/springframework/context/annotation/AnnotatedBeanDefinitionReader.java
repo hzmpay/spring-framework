@@ -269,6 +269,8 @@ public class AnnotatedBeanDefinitionReader {
 
 		// 对一些Bean的一些通用注解进行BeanDefinition赋值
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		// 如果使用了额外限定符
+		// spring默认按照类型注入，如果声明了@Qualifier则按照名称注入
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {

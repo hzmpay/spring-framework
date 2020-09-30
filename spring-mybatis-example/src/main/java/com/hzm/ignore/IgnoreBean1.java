@@ -1,14 +1,14 @@
 package com.hzm.ignore;
 
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Hezeming
  * @version 1.0
  * @date 2020年09月29日
  */
-@Component
+@Configurable
 public class IgnoreBean1 {
 
 	private String name;
@@ -26,7 +26,7 @@ public class IgnoreBean1 {
 	}
 
 	@Bean
-	public IgnoreBean2 setIgnoreBean2() {
+	public IgnoreBean2 ignoreBean2() {
 		return new IgnoreBean2();
 	}
 
