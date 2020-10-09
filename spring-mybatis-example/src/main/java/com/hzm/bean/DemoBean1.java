@@ -11,7 +11,7 @@ public class DemoBean1 {
 
 	public DemoBean1() {
 		name = "default" + DemoBean1.class.getSimpleName();
-		System.out.println(getClass() + " create");
+		System.out.println(name + " create NoArgs");
 	}
 
 	public DemoBean1(String name) {
@@ -19,7 +19,7 @@ public class DemoBean1 {
 		if (name == null) {
 			name = "default" + DemoBean1.class.getSimpleName();
 		}
-		System.out.println(getClass() + " create");
+		System.out.println(name + " create HasArgs");
 	}
 
 	public void say() {

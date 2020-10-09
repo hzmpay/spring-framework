@@ -1,5 +1,8 @@
 package com.hzm.ioc;
 
+import com.hzm.bean.CircularReferenceBean1;
+import com.hzm.bean.CircularReferenceBean2;
+import com.hzm.bean.DemoBean1;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
 import com.hzm.ignore.IgnoreBean2;
@@ -39,6 +42,9 @@ public class AnnotationConfigApplicationContextTests {
 		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
 		context.register(IgnoreBean1.class);
 		context.register(HzmConfig.class);
+//		context.registerBean("demo1", IgnoreBean1.class);
+//		context.registerBean("demo2", IgnoreBean1.class);
+//		context.registerBean("demo3", IgnoreBean1.class);
 		System.out.println("==================>register after");
 		System.out.println("==================>refresh before");
 		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
@@ -50,17 +56,41 @@ public class AnnotationConfigApplicationContextTests {
 
 
 
-		final IgnoreBean1 ignoreBean2 = context.getBean(IgnoreBean1.class);
-		System.out.println(ignoreBean2);
+		final IgnoreBean1 ignoreBean1 = context.getBean(IgnoreBean1.class);
+		System.out.println(ignoreBean1);
 
-		final IgnoreBean2 ignoreBean3 = context.getBean(IgnoreBean2.class);
-		System.out.println(ignoreBean3);
+		final IgnoreBean2 ignoreBean2 = context.getBean(IgnoreBean2.class);
+		System.out.println(ignoreBean2);
 
 
 //		final ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
 
 //		System.out.println(context.getBean("demoBean1"));
 
+
+	}
+
+
+	@Test
+	public void getBeanTest() {
+
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.registerBean("demoBean1", DemoBean1.class);
+		context.registerBean("demoBean2", DemoBean1.class);
+		context.registerBean("demoBean3", DemoBean1.class);
+		context.refresh();
+
+		context.getBean("demoBean1");
+	}
+
+	@Test
+	public void circularReferenceBeanTest() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.registerBean(CircularReferenceBean1.class);
+		context.registerBean(CircularReferenceBean2.class);
+		context.refresh();
+
+		context.getBean(CircularReferenceBean1.class);
 
 	}
 
