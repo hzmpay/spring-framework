@@ -90,8 +90,14 @@ public class AnnotationConfigApplicationContextTests {
 		context.registerBean(CircularReferenceBean2.class);
 		context.refresh();
 
-		context.getBean(CircularReferenceBean1.class);
+		final CircularReferenceBean1 circularReferenceBean1 = context.getBean(CircularReferenceBean1.class);
+		System.out.println(circularReferenceBean1);
 
+	}
+
+	@Test
+	public void resolvableTypeTest() {
+//		ResolvableType.forClass()
 	}
 
 }

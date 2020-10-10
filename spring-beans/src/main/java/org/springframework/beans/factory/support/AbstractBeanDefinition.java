@@ -16,14 +16,6 @@
 
 package org.springframework.beans.factory.support;
 
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-
 import org.springframework.beans.BeanMetadataAttributeAccessor;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -37,6 +29,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Base class for concrete, full-fledged {@link BeanDefinition} classes,
@@ -538,6 +534,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	/**
 	 * Return whether this bean is "abstract", i.e. not meant to be instantiated
 	 * itself but rather just serving as parent for concrete child bean definitions.
+	 * 返回这个bean是否“抽象”，也就是说，它不需要实例化自己，而只是作为具体子bean定义的父bean。
 	 */
 	@Override
 	public boolean isAbstract() {

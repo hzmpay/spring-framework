@@ -64,18 +64,17 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 
 	/**
-	 * 单例对象的缓存<bean名称，bean实例>
+	 * 单例对象的缓存<bean名称，bean实例>（一级缓存）
 	 */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/**
-	 * Cache of singleton factories: bean name to ObjectFactory.
-	 * 单例工厂的缓存:<bean名称，ObjectFactory>
+	 * 单例工厂的缓存:<bean名称，ObjectFactory>（三级缓存）
 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/**
-	 * 早期单例对象的缓存<bean名称，bean实例>
+	 * 早期单例对象的缓存<bean名称，bean实例>（二级缓存）
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -121,7 +120,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
 
-	/** Map between depending bean names: bean name to Set of bean names for the bean's dependencies. */
+	/**
+	 * Map between depending bean names: bean name to Set of bean names for the bean's dependencies.
+	 * 依赖bean名称之间的映射:bean名称到bean依赖项的一组bean名称，比如
+	 */
 	private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
 
 
@@ -188,22 +190,28 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * 检查已经实例化了单例对象，还允许对当前创建的单例对象进行早期引用(解决循环引用)。
 	 *
 	 * @param beanName the name of the bean to look for
-	 * @param allowEarlyReference whether early references should be created or not
+	 * @param allowEarlyReference 是否允许早期引用（二级缓存）
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		Object singletonObject = this.singletonObjects.get(beanName);
-		// 缓存不在 而且 这个bean正在创建中的话
+		// 不在一级缓存中 而且 这个bean正在创建中的话（发生循环引用）
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
+				// 判断在二级缓存中是否存在
 				singletonObject = this.earlySingletonObjects.get(beanName);
-				// 正在创建并且早起对象不存在 而且 允许早期引用
+				// 二级缓存不存在 而且 允许早期引用
 				if (singletonObject == null && allowEarlyReference) {
+					// 从三级缓存拿
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						// 从三级缓存的ObjectFactory获取实例升级到二级缓存
+						// 因为getObject获取的实例可能会经过AOP增强的代理对象，下次直接从二级缓存拿，提升效率
 						singletonObject = singletonFactory.getObject();
+						// 存储到二级缓存
 						this.earlySingletonObjects.put(beanName, singletonObject);
+						// 从三级缓存剔除
 						this.singletonFactories.remove(beanName);
 					}
 				}
@@ -419,8 +427,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/**
 	 * Register a dependent bean for the given bean,
 	 * to be destroyed before the given bean is destroyed.
-	 * @param beanName the name of the bean
-	 * @param dependentBeanName the name of the dependent bean
+	 *
+	 * 为给定的bean注册一个依赖的bean，在给定的bean被销毁之前销毁它
+	 *
+	 * @param beanName bean的名称
+	 * @param dependentBeanName 依赖bean的名称
 	 */
 	public void registerDependentBean(String beanName, String dependentBeanName) {
 		String canonicalName = canonicalName(beanName);
@@ -443,6 +454,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/**
 	 * Determine whether the specified dependent bean has been registered as
 	 * dependent on the given bean or on any of its transitive dependencies.
+	 *
+	 * 确定指定的依赖bean是否已注册为依赖于给定bean或其任何传递依赖。
+	 *
 	 * @param beanName the name of the bean to check
 	 * @param dependentBeanName the name of the dependent bean
 	 * @since 4.0
