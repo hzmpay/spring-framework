@@ -16,11 +16,11 @@
 
 package org.springframework.beans;
 
-import java.lang.reflect.Field;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.lang.Nullable;
+
+import java.lang.reflect.Field;
 
 /**
  * Interface that defines type conversion methods. Typically (but not necessarily)
@@ -41,6 +41,10 @@ public interface TypeConverter {
 	 * Convert the value to the required type (if necessary from a String).
 	 * <p>Conversions from String to any type will typically use the {@code setAsText}
 	 * method of the PropertyEditor class, or a Spring Converter in a ConversionService.
+	 *
+	 * 将值转换为所需的类型(如果需要从字符串)。
+	 * 从字符串到任何类型的转换通常使用PropertyEditor类的setAsText方法，或ConversionService中的Spring转换器。
+	 *
 	 * @param value the value to convert
 	 * @param requiredType the type we must convert to
 	 * (or {@code null} if not known, for example in case of a collection element)
