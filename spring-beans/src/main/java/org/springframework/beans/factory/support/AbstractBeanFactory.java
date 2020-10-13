@@ -256,7 +256,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 		// 不存在
 		else {
-			// 单例缓存中不存在的情况可能是原型模式
+			// 单例缓存中不存在的情况可能是：
+			// 1.原型模式
+			// 2.单例模式但是刚刚创建
 			// 如果我们在当前线程中已经创建过这个bean实例（说明在循环引用中。），则会失败
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
@@ -306,7 +308,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					for (String dep : dependsOn) {
 						// beanName是否在dep之前加载
 						if (isDependent(beanName, dep)) {
-							// 循环依赖
+							// depends-on存在循环依赖
 							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 									"Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
 						}

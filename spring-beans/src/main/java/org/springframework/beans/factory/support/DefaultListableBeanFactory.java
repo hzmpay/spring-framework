@@ -133,7 +133,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** Map of singleton-only bean names, keyed by dependency type. */
 	private final Map<Class<?>, String[]> singletonBeanNamesByType = new ConcurrentHashMap<>(64);
 
-	/** List of bean definition names, in registration order. */
+	/**
+	 * List of bean definition names, in registration order.
+	 * 按注册顺序排列的bean定义名称列表 TODO pr：这里应该用LinkedHashSet
+	 */
 	private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
 
 	/**
@@ -845,9 +848,13 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
-		// Trigger initialization of all non-lazy singleton beans...
+		// 触发所有非懒加载单例bean的初始化
 		for (String beanName : beanNames) {
+			if ("circularReferenceBean1".equals(beanName)) {
+				System.out.println("into circularReferenceBean1 ============>");
+			}
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+			// 不是抽象类 && 是单例 && 没有设置懒加载
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				if (isFactoryBean(beanName)) {
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
