@@ -90,7 +90,7 @@ public class AnnotationConfigApplicationContextTests {
 		context.registerBean(CircularReferenceBean2.class);
 		context.refresh();
 
-		final CircularReferenceBean1 circularReferenceBean1 = context.getBean(CircularReferenceBean1.class);
+		final CircularReferenceBean1 circularReferenceBean1 = (CircularReferenceBean1) context.getBean("circularReferenceBean1");
 		System.out.println(circularReferenceBean1);
 
 	}

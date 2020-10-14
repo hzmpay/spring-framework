@@ -257,8 +257,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// 不存在
 		else {
 			// 单例缓存中不存在的情况可能是：
-			// 1.原型模式
-			// 2.单例模式但是刚刚创建
+			// 1.原型模式，存在循环下面判断为true
+			// 2.单例模式但是第一次创建，下面判断判断为false
 			// 如果我们在当前线程中已经创建过这个bean实例（说明在循环引用中。），则会失败
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
@@ -296,7 +296,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			try {
-				// 根据指定Bean名称获取其父级Bean定义
+				// 如果指定的beanName是子类的话会合并父类BeanDefinition的属性
 				// 主要解决Bean继承时子类和父类公共属性问题
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				// 检查这个合并后的BeanDefinition是否需要实例化，需要则抛出异常
@@ -399,7 +399,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// 检查required类型是否与实际bean实例的类型匹配
 		if (requiredType != null && !requiredType.isInstance(bean)) {
 			try {
-				// 不匹配则找到对应的类型转换器进行转换
+				// 不匹配则找到对应的类型转换器进行转换为所需类型
 				T convertedBean = getTypeConverter().convertIfNecessary(bean, requiredType);
 				if (convertedBean == null) {
 					throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
@@ -1380,17 +1380,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 				}
 				else {
-					// 不是根则是ChildBeanDefinition，寻找父BeanDefinition进行合并
+					// 不是根则是ChildBeanDefinition，递归寻找至最顶级父BeanDefinition进行合并
 					// Child bean definition: needs to be merged with parent.
 					BeanDefinition pbd;
 					try {
 						String parentBeanName = transformedBeanName(bd.getParentName());
 						if (!beanName.equals(parentBeanName)) {
-							// 不相等说明这个parentBeanName也是个ChildBeanDefinition，
-							// 再次递归直到与根BeanDefinition合并
+							// 正常情况：传入的bd就是传入的beanName获取的，所以不相等
+							// 正常情况下都是不相等，递归寻找上级BeanDefinition，直到与最顶级根BeanDefinition合并
 							pbd = getMergedBeanDefinition(parentBeanName);
 						}
 						else {
+							// TODO 不明白beanName和parentBeanName相等的场景？
 							// 相等说明当前pb的上一级就是根BeanDefinition
 							BeanFactory parent = getParentBeanFactory();
 							if (parent instanceof ConfigurableBeanFactory) {
@@ -1411,7 +1412,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 					// Deep copy with overridden values.
 					mbd = new RootBeanDefinition(pbd);
-					// 子BeanDefinition覆盖父BeanDefinition
+					// 子BeanDefinition部分覆盖父BeanDefinition，具体属性看方法注释
 					mbd.overrideFrom(bd);
 				}
 
@@ -1875,6 +1876,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			return beanInstance;
 		}
 
+		// 这时beanInstance确认是FactoryBean了
 		Object object = null;
 		if (mbd != null) {
 			mbd.isFactoryBean = true;
@@ -1936,6 +1938,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 */
 	protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
 		AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
+		// 不是原型模式 而且
 		if (!mbd.isPrototype() && requiresDestruction(bean, mbd)) {
 			if (mbd.isSingleton()) {
 				// Register a DisposableBean implementation that performs all destruction
