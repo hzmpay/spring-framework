@@ -16,34 +16,18 @@
 
 package org.springframework.beans.factory.support;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.beans.factory.config.NamedBeanHolder;
-import org.springframework.beans.factory.config.RuntimeBeanNameReference;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.config.TypedStringValue;
+import org.springframework.beans.factory.*;
+import org.springframework.beans.factory.config.*;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Helper class for use in bean factory implementations,
@@ -100,6 +84,15 @@ class BeanDefinitionValueResolver {
 	 * <li>A ManagedMap. In this case the value may be a RuntimeBeanReference
 	 * or Collection that will need to be resolved.
 	 * <li>An ordinary object or {@code null}, in which case it's left alone.
+	 *
+	 * 给定PropertyValue，返回一个值，必要时解析对工厂中其他bean的任何引用。值可以是：
+	 * 一个BeanDefinition，这将导致创建一个相应的新bean实例。这种“内部bean”的单例标记和名称总是被忽略:内部bean是匿名原型。
+	 * 一个RuntimeBeanReference，这个必须解析。
+	 * 一个ManagedList，这是一个特殊的集合，可能包含RuntimeBeanReferences或需要解析的集合。
+	 * 一个ManagedSet，还可能包含需要解析的RuntimeBeanReferences或集合。
+	 * 一个ManagedMap，在这种情况下，值可能是需要解析的RuntimeBeanReference或集合。
+	 * 一个普通的对象或null，在这种情况下，它被单独留下。
+	 *
 	 * @param argName the name of the argument that the value is defined for
 	 * @param value the value object to resolve
 	 * @return the resolved object

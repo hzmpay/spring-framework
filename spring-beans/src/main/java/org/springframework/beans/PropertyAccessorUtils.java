@@ -41,6 +41,7 @@ public abstract class PropertyAccessorUtils {
 
 	/**
 	 * Check whether the given property path indicates an indexed or nested property.
+	 * 检查给定的属性路径是否是：指示索引属性或嵌套属性。
 	 * @param propertyPath the property path to check
 	 * @return whether the path indicates an indexed or nested property
 	 */
@@ -48,6 +49,7 @@ public abstract class PropertyAccessorUtils {
 		if (propertyPath == null) {
 			return false;
 		}
+		// TODO 考虑从1开始，因为第一位不可能是属性分隔符
 		for (int i = 0; i < propertyPath.length(); i++) {
 			char ch = propertyPath.charAt(i);
 			if (ch == PropertyAccessor.NESTED_PROPERTY_SEPARATOR_CHAR ||
