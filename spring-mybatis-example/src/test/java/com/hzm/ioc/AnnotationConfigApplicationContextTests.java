@@ -3,6 +3,9 @@ package com.hzm.ioc;
 import com.hzm.bean.CircularReferenceBean1;
 import com.hzm.bean.CircularReferenceBean2;
 import com.hzm.bean.DemoBean1;
+import com.hzm.bean.circularReference.BeanA;
+import com.hzm.bean.circularReference.BeanB;
+import com.hzm.bean.circularReference.BeanC;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
 import com.hzm.ignore.IgnoreBean2;
@@ -92,6 +95,22 @@ public class AnnotationConfigApplicationContextTests {
 
 		final CircularReferenceBean1 circularReferenceBean1 = (CircularReferenceBean1) context.getBean("circularReferenceBean1");
 		System.out.println(circularReferenceBean1);
+
+	}
+
+	@Test
+	public void circularReferenceBeanConstructorTest() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+		context.registerBean(BeanA.class);
+		context.registerBean(BeanB.class);
+		context.registerBean(BeanC.class);
+
+		context.setAllowCircularReferences(false);
+
+		context.refresh();
+
+		System.out.println(context.getBean(BeanA.class));
 
 	}
 

@@ -850,8 +850,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// 触发所有非懒加载单例bean的初始化
 		for (String beanName : beanNames) {
-			if ("circularReferenceBean1".equals(beanName)) {
-				System.out.println("into circularReferenceBean1 ============>");
+			if ("beanA".equals(beanName)) {
+				System.out.println("into " + beanName + " ============>");
 			}
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			// 不是抽象类 && 是单例 && 没有设置懒加载
