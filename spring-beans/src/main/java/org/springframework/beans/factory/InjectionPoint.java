@@ -16,21 +16,24 @@
 
 package org.springframework.beans.factory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 
 /**
  * A simple descriptor for an injection point, pointing to a method/constructor
  * parameter or a field. Exposed by {@link UnsatisfiedDependencyException}.
  * Also available as an argument for factory methods, reacting to the
  * requesting injection point for building a customized bean instance.
+ *
+ * 注入点的简单描述符，指向方法/构造函数参数或字段。由UnsatisfiedDependencyException暴露。
+ * 也可以作为工厂方法的参数，对构建定制bean实例的请求注入点做出反应。
  *
  * @author Juergen Hoeller
  * @since 4.3
