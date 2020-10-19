@@ -1,5 +1,6 @@
 package com.hzm.ioc;
 
+import com.hzm.aware.MyApplicationContextAware;
 import com.hzm.bean.CircularReferenceBean1;
 import com.hzm.bean.CircularReferenceBean2;
 import com.hzm.bean.DemoBean1;
@@ -7,6 +8,7 @@ import com.hzm.bean.circularReference.constructor.BeanA;
 import com.hzm.bean.circularReference.constructor.BeanB;
 import com.hzm.bean.circularReference.constructor.BeanC;
 import com.hzm.bean.circularReference.param.BeanD;
+import com.hzm.bean.list.DemoBeanList;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
 import com.hzm.ignore.IgnoreBean2;
@@ -130,6 +132,27 @@ public class AnnotationConfigApplicationContextTests {
 
 		System.out.println(context.getBean(BeanD.class));
 
+	}
+
+	@Test
+	public void registerBeanList() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DemoBeanList.class);
+		final DemoBeanList demoBeanList = context.getBean(DemoBeanList.class);
+
+		demoBeanList.say();
+
+	}
+
+	@Test
+	public void applicationContextAwareTest() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.registerBean(MyApplicationContextAware.class);
+		context.registerBean(DemoBean1.class);
+		context.refresh();
+
+		System.out.println("开始输出===========》");
+
+		System.out.println(MyApplicationContextAware.getBean(DemoBean1.class));
 	}
 
 }
