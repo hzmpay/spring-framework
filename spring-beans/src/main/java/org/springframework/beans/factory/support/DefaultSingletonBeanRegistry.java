@@ -109,7 +109,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/**
 	 * Disposable bean instances: bean name to disposable instance.
-	 * 可处置bean实例缓存
+	 * 可丢弃bean实例缓存
 	 */
 	private final Map<String, Object> disposableBeans = new LinkedHashMap<>();
 
@@ -210,7 +210,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * 检查已经实例化了单例对象，还允许对当前创建的单例对象进行早期引用(解决循环引用)。
 	 *
 	 * @param beanName the name of the bean to look for
-	 * @param allowEarlyReference 是否允许早期引用（二级缓存）
+	 * @param allowEarlyReference 是否允许早期引用（三级缓存）
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	@Nullable
@@ -221,7 +221,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			synchronized (this.singletonObjects) {
 				// 判断在二级缓存中是否存在
 				singletonObject = this.earlySingletonObjects.get(beanName);
-				// 二级缓存不存在 而且 允许早期引用
+				// 二级缓存不存在 而且 允许早期引用（三级缓存）
 				if (singletonObject == null && allowEarlyReference) {
 					// 从三级缓存拿
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);

@@ -466,6 +466,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			// 给BeanPostProcessors一个返回代理而不是目标bean实例的机会。？
+			// 如：经过实现AOP代理的PostProcessor返回一个代理对象
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -522,6 +523,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			// 根据指定的bean使用对应的策略创建最新的实例：如工厂方法，构造函数自动注入，简单初始化
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		Object bean = instanceWrapper.getWrappedInstance();
@@ -549,6 +551,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
 		// 急切地缓存单例（三级缓存），以便能够解决循环引用，即使是被生命周期接口(如BeanFactoryAware)触发。
+		// 是否单例 && 循环依赖开关是否开启 && 当前的bean是否在创建中，检测循环依赖（创建中说明已经加入到缓存了）
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -557,6 +560,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						"' to allow for resolving potential circular references");
 			}
 			// 添加三级缓存，解决循环引用
+			// AOP代理在getEarlyBeanReference方法中的SmartInstantiationAwareBeanPostProcessor实现
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
@@ -578,11 +582,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 存在循环依赖
 		if (earlySingletonExposure) {
 			// 查看一级或二级缓存是否存在
 			Object earlySingletonReference = getSingleton(beanName, false);
+			// 当前正在实例化的bean已初始化完成
 			if (earlySingletonReference != null) {
-				// 正在实例化的bean与根据名称获取的已注册bean相等说明：当前正在实例化的bean已初始化完成
+				// 正在实例化的bean与根据名称获取的已注册bean相等说明：
+				// initializeBean()方法没有对当前bean进行增强
 				if (exposedObject == bean) {
 					// 正在实例化的bean升级为缓存中的bean
 					exposedObject = earlySingletonReference;
@@ -934,6 +941,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * Obtain a reference for early access to the specified bean,
 	 * typically for the purpose of resolving a circular reference.
+	 * 获取对指定bean的早期访问的引用，通常用于解析循环引用。
+	 * （获取三级缓存的ObjectFactory返回的实例，AOP就在这里处理）
+	 *
 	 * @param beanName the name of the bean (for error handling purposes)
 	 * @param mbd the merged bean definition for the bean
 	 * @param bean the raw bean instance
@@ -1171,8 +1181,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		boolean autowireNecessary = false;
 		if (args == null) {
 			synchronized (mbd.constructorArgumentLock) {
+				// 存在构造函数或者工厂方法
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
 					resolved = true;
+					// 有参构造参数接卸
 					autowireNecessary = mbd.constructorArgumentsResolved;
 				}
 			}

@@ -3,9 +3,10 @@ package com.hzm.ioc;
 import com.hzm.bean.CircularReferenceBean1;
 import com.hzm.bean.CircularReferenceBean2;
 import com.hzm.bean.DemoBean1;
-import com.hzm.bean.circularReference.BeanA;
-import com.hzm.bean.circularReference.BeanB;
-import com.hzm.bean.circularReference.BeanC;
+import com.hzm.bean.circularReference.constructor.BeanA;
+import com.hzm.bean.circularReference.constructor.BeanB;
+import com.hzm.bean.circularReference.constructor.BeanC;
+import com.hzm.bean.circularReference.param.BeanD;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
 import com.hzm.ignore.IgnoreBean2;
@@ -101,12 +102,12 @@ public class AnnotationConfigApplicationContextTests {
 	@Test
 	public void circularReferenceBeanConstructorTest() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.setAllowCircularReferences(false);
 
 		context.registerBean(BeanA.class);
 		context.registerBean(BeanB.class);
 		context.registerBean(BeanC.class);
 
-		context.setAllowCircularReferences(false);
 
 		context.refresh();
 
@@ -117,6 +118,18 @@ public class AnnotationConfigApplicationContextTests {
 	@Test
 	public void resolvableTypeTest() {
 //		ResolvableType.forClass()
+	}
+
+	@Test
+	public void circularReferenceBeanResourceTest() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.setAllowCircularReferences(false);
+
+		context.scan("com.hzm.bean.circularReference.param");
+		context.refresh();
+
+		System.out.println(context.getBean(BeanD.class));
+
 	}
 
 }

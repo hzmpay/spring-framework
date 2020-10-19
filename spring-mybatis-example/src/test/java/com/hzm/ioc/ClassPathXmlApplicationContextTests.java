@@ -1,5 +1,6 @@
 package com.hzm.ioc;
 
+import com.hzm.bean.circularReference.constructor.BeanA;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -12,8 +13,12 @@ public class ClassPathXmlApplicationContextTests {
 
 	@Test
 	public void circularReferenceBeanConstructorTest() {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
+//		context.setAllowCircularReferences(false);
+		context.setConfigLocation("application-context.xml");
 		context.refresh();
+		final BeanA beanA = context.getBean(BeanA.class);
+		System.out.println(beanA);
 	}
 
 }

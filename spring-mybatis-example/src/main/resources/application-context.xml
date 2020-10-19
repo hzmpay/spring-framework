@@ -8,15 +8,15 @@
        default-lazy-init="true">
 
 
-	<bean id="beanA" class="com.hzm.bean.circularReference.BeanA">
+	<bean id="beanA" class="com.hzm.bean.circularReference.constructor.BeanA">
 		<constructor-arg index="0" ref="beanB"/>
 	</bean>
 
-	<bean id="beanB" class="com.hzm.bean.circularReference.BeanB">
+	<bean id="beanB" class="com.hzm.bean.circularReference.constructor.BeanB">
 		<constructor-arg index="0" ref="beanC"/>
 	</bean>
 
-	<bean id="beanC" class="com.hzm.bean.circularReference.BeanC">
+	<bean id="beanC" class="com.hzm.bean.circularReference.constructor.BeanC">
 		<constructor-arg index="0" ref="beanA"/>
 	</bean>
 
