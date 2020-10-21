@@ -8,6 +8,10 @@ import com.hzm.bean.circularReference.constructor.BeanA;
 import com.hzm.bean.circularReference.constructor.BeanB;
 import com.hzm.bean.circularReference.constructor.BeanC;
 import com.hzm.bean.circularReference.param.BeanD;
+import com.hzm.bean.initMethod.DemoBeanInitMethod;
+import com.hzm.bean.initMethod.DemoBeanInitMethodAndBean;
+import com.hzm.bean.initMethod.DemoInitializingBean;
+import com.hzm.bean.initMethod.InitBeanConfig;
 import com.hzm.bean.list.DemoBeanList;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
@@ -153,6 +157,18 @@ public class AnnotationConfigApplicationContextTests {
 		System.out.println("开始输出===========》");
 
 		System.out.println(MyApplicationContextAware.getBean(DemoBean1.class));
+	}
+
+	@Test
+	public void initMethodAndInitBeanTest() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(InitBeanConfig.class);
+		context.getBean(DemoBeanInitMethod.class);
+		context.getBean(DemoInitializingBean.class);
+		context.getBean(DemoBeanInitMethodAndBean.class);
+
+
+		System.out.println("开始销毁容器 ==============》");
+		context.close();
 	}
 
 }
