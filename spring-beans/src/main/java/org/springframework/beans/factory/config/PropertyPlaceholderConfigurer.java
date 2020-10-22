@@ -16,8 +16,6 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Properties;
-
 import org.springframework.beans.BeansException;
 import org.springframework.core.Constants;
 import org.springframework.core.SpringProperties;
@@ -26,6 +24,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.springframework.util.StringValueResolver;
+
+import java.util.Properties;
 
 /**
  * {@link PlaceholderConfigurerSupport} subclass that resolves ${...} placeholders against
@@ -43,6 +43,13 @@ import org.springframework.util.StringValueResolver;
  * of functionality may be maintained by continuing to use {@code PropertyPlaceholderConfigurer}.
  * </ul>
  *
+ * PlaceholderConfigurerSupport解析${...}本地属性和/或系统属性和环境变量的占位符。
+ * PropertyPlaceholderConfigurer仍然适合使用时:
+ * Spring上下文模块不可用(例如，使用Spring的BeanFactory API而不是ApplicationContext)。
+ * 现有的配置使用了“systemPropertiesMode”和/或“systemPropertiesModeName”属性。
+ * 鼓励用户不再使用这些设置，而是通过容器的环境配置属性源搜索顺序;
+ * 但是，可以通过继续使用PropertyPlaceholderConfigurer来保持功能的精确保存。
+ *
  * @author Juergen Hoeller
  * @author Chris Beams
  * @since 02.10.2003
@@ -52,6 +59,8 @@ import org.springframework.util.StringValueResolver;
  * @deprecated as of 5.2; use {@code org.springframework.context.support.PropertySourcesPlaceholderConfigurer}
  * instead which is more flexible through taking advantage of the {@link org.springframework.core.env.Environment}
  * and {@link org.springframework.core.env.PropertySource} mechanisms.
+ *
+ * 为5.2;使用PropertySourcesPlaceholderConfigurer，它通过利用Environment和PropertySource机制更加灵活。
  */
 @Deprecated
 public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport {
