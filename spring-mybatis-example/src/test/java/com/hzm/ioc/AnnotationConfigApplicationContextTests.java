@@ -13,6 +13,7 @@ import com.hzm.bean.initMethod.DemoBeanInitMethodAndBean;
 import com.hzm.bean.initMethod.DemoInitializingBean;
 import com.hzm.bean.initMethod.InitBeanConfig;
 import com.hzm.bean.list.DemoBeanList;
+import com.hzm.beanFactoryProcessor.BeanFactoryPostProcessorConfig;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
 import com.hzm.ignore.IgnoreBean2;
@@ -170,5 +171,13 @@ public class AnnotationConfigApplicationContextTests {
 		System.out.println("开始销毁容器 ==============》");
 		context.close();
 	}
+
+	@Test
+	public void beanFactoryPostProcessorTest() {
+		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanFactoryPostProcessorConfig.class);
+
+
+	}
+
 
 }
