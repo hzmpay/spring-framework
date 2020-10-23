@@ -13,7 +13,8 @@ import com.hzm.bean.initMethod.DemoBeanInitMethodAndBean;
 import com.hzm.bean.initMethod.DemoInitializingBean;
 import com.hzm.bean.initMethod.InitBeanConfig;
 import com.hzm.bean.list.DemoBeanList;
-import com.hzm.beanFactoryProcessor.BeanFactoryPostProcessorConfig;
+import com.hzm.beanFactoryPostProcessor.BeanFactoryPostProcessorConfig;
+import com.hzm.beanPostProcessor.BeanPostProcessorConfig;
 import com.hzm.config.HzmConfig;
 import com.hzm.ignore.IgnoreBean1;
 import com.hzm.ignore.IgnoreBean2;
@@ -175,9 +176,22 @@ public class AnnotationConfigApplicationContextTests {
 	@Test
 	public void beanFactoryPostProcessorTest() {
 		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanFactoryPostProcessorConfig.class);
+	}
 
+	@Test
+	public void beanPostProcessorTest() {
+		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanPostProcessorConfig.class);
+
+		System.out.println("context加载完成 ===========>");
+//		final MyBeanPostProcessor myBeanPostProcessor = context.getBean(MyBeanPostProcessor.class);
+//		final BeanPostProcessorConfig beanPostProcessorConfig = context.getBean(BeanPostProcessorConfig.class);
+
+		System.out.println("所有的beanName ===========>");
+		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
 
 	}
+
+
 
 
 }

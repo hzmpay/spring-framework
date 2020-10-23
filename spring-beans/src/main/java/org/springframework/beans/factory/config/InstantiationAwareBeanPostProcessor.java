@@ -16,11 +16,11 @@
 
 package org.springframework.beans.factory.config;
 
-import java.beans.PropertyDescriptor;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.lang.Nullable;
+
+import java.beans.PropertyDescriptor;
 
 /**
  * Subinterface of {@link BeanPostProcessor} that adds a before-instantiation callback,
@@ -37,6 +37,12 @@ import org.springframework.lang.Nullable;
  * {@link BeanPostProcessor} interface as far as possible, or to derive from
  * {@link InstantiationAwareBeanPostProcessorAdapter} in order to be shielded
  * from extensions to this interface.
+ *
+ * BeanPostProcessor的子接口，它添加实例化前的回调，以及实例化后但在显式属性设置或自动装配发生之前的回调。
+ * 通常用于抑制特定目标bean的默认实例化，例如创建具有特殊目标源(池目标、延迟初始化目标等)的代理，
+ * 或者实现额外的注入策略，如字段注入。
+ * 注意:此接口是一个特殊用途的接口，主要用于框架内部使用。建议尽可能实现普通的BeanPostProcessor接口，
+ * 或者从InstantiationAwareBeanPostProcessorAdapter派生，以便屏蔽对该接口的扩展。
  *
  * @author Juergen Hoeller
  * @author Rod Johnson

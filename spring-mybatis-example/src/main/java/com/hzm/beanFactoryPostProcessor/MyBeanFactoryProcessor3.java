@@ -1,4 +1,4 @@
-package com.hzm.beanFactoryProcessor;
+package com.hzm.beanFactoryPostProcessor;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @date 2020年10月21日
  */
 @Component
-public class MyBeanFactoryProcessor2 implements BeanFactoryPostProcessor, Ordered {
+public class MyBeanFactoryProcessor3 implements BeanFactoryPostProcessor, Ordered {
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
@@ -21,6 +21,6 @@ public class MyBeanFactoryProcessor2 implements BeanFactoryPostProcessor, Ordere
 
 	@Override
 	public int getOrder() {
-		return 2;
+		return 3;
 	}
 }

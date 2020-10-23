@@ -1,4 +1,4 @@
-package com.hzm.beanFactoryProcessor;
+package com.hzm.beanFactoryPostProcessor;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

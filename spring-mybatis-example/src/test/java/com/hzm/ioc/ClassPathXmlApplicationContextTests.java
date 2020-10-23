@@ -29,4 +29,9 @@ public class ClassPathXmlApplicationContextTests {
 		System.out.println(bean);
 	}
 
+	@Test
+	public void beanFactoryPostProcessorTest() {
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("PropertyPlaceholderConfigurer.xml");
+	}
+
 }

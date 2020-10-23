@@ -570,6 +570,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 填充bean
 			populateBean(beanName, mbd, instanceWrapper);
 			// 初始化bean
+			if (beanName.equals("myBeanPostProcessor")) {
+				int i =1;
+			}
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {

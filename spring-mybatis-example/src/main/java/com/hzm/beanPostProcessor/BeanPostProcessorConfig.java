@@ -1,4 +1,4 @@
-package com.hzm.beanFactoryProcessor;
+package com.hzm.beanPostProcessor;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020年10月21日
  */
 @Configuration
-@ComponentScan(value = {"com.hzm.beanFactoryProcessor"})
-public class BeanFactoryPostProcessorConfig {
+@ComponentScan(value = {"com.hzm.beanPostProcessor"})
+public class BeanPostProcessorConfig {
 }
