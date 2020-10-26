@@ -527,11 +527,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// 4.允许在context子类中对bean工厂进行创建后置处理。比如：注册WEB相关信息
 				postProcessBeanFactory(beanFactory);
 
-				// 5.调用上下文中注册为BeanFactoryPostProcessor的bean
+				// 5.调用上下文中注册类型为BeanFactoryPostProcessor的bean
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// 6.为BeanFactory注册Bean后置处理器.在Bean创建之后才进行调用
-				// BeanPostProcessor是Bean后置处理器，用于监听容器触发的事件
+				// 6.为BeanFactory注册BeanPostProcessor.在Bean创建前后才进行调用
 				registerBeanPostProcessors(beanFactory);
 
 				// 7.初始化MessageSource。父类有默认实现，子类可重写（国际化相关）

@@ -16,12 +16,8 @@
 
 package org.springframework.context.support;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -29,6 +25,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@code BeanPostProcessor} that detects beans which implement the {@code ApplicationListener}
@@ -40,6 +39,12 @@ import org.springframework.util.ObjectUtils;
  * mechanisms, {@code DisposableBeanAdapter.writeReplace} might not get used at all, so we
  * defensively mark this post-processor's field state as {@code transient}.
  *
+ * 检测实现ApplicationListener接口的bean的BeanPostProcessor.
+ * 这将捕获不能被getBeanNamesForType可靠地检测到的bean和只对顶级bean有效的相关操作。
+ *
+ * 使用标准Java序列化，这个后处理器不会作为DisposableBeanAdapter的一部分进行序列化。但是，使用可选的序列化机制，
+ * DisposableBeanAdapter.writeReplace可能根本不会被使用，因此我们防御性地将这个后处理器的字段状态标记为transient。
+ *
  * @author Juergen Hoeller
  * @since 4.3.4
  */
@@ -49,6 +54,9 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 
 	private final transient AbstractApplicationContext applicationContext;
 
+	/**
+	 * <beanName，是否是单例>
+	 */
 	private final transient Map<String, Boolean> singletonNames = new ConcurrentHashMap<>(256);
 
 
@@ -73,6 +81,7 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 	public Object postProcessAfterInitialization(Object bean, String beanName) {
 		if (bean instanceof ApplicationListener) {
 			// potentially not detected as a listener by getBeanNamesForType retrieval
+			// getBeanNamesForType检索可能没有检测到侦听器
 			Boolean flag = this.singletonNames.get(beanName);
 			if (Boolean.TRUE.equals(flag)) {
 				// singleton bean (top-level or inner): register on the fly
@@ -81,6 +90,9 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 			else if (Boolean.FALSE.equals(flag)) {
 				if (logger.isWarnEnabled() && !this.applicationContext.containsBean(beanName)) {
 					// inner bean with other scope - can't reliably process events
+					// 内部bean 'A'实现了ApplicationListener接口，但是由于它没有单例作用域，
+					// 所以不能通过它包含的ApplicationContext进行事件多播。只允许顶级侦听器bean属于非单例作用域
+					// ??
 					logger.warn("Inner bean '" + beanName + "' implements ApplicationListener interface " +
 							"but is not reachable for event multicasting by its containing ApplicationContext " +
 							"because it does not have singleton scope. Only top-level listener beans are allowed " +

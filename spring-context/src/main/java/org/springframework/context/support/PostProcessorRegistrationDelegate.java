@@ -58,8 +58,8 @@ final class PostProcessorRegistrationDelegate {
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 
 			/*
-			 * 处理《硬编码》注册的BeanFactoryPostProcessor
-			 * （通过AbstractApplicationContext.addBeanFactoryPostProcessor手动注册）
+			 * A：处理《硬编码》注册的BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor
+			 * 硬编码：（通过AbstractApplicationContext.addBeanFactoryPostProcessor手动注册）
 			 */
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
@@ -83,7 +83,7 @@ final class PostProcessorRegistrationDelegate {
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
 			/*
-			 * 处理配置注册的BeanDefinitionRegistryPostProcessors（通过扫描包或者xml等形式）
+			 * B：处理配置注册的BeanDefinitionRegistryPostProcessors（通过扫描包或者xml等形式）
 			 */
 			// TODO 以下操作的postProcessorNames每次都重新获取？？代码存在并发？也不对，有并发不加锁也避免不了
 
@@ -149,7 +149,7 @@ final class PostProcessorRegistrationDelegate {
 			invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
 		}
 		/*
-		 * 下面开始处理所有配置的BeanFactoryPostProcessor（通过扫描包或者xml等形式）
+		 * C:下面开始处理所有配置的BeanFactoryPostProcessor（通过扫描包或者xml等形式）
 		 */
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
@@ -206,19 +206,31 @@ final class PostProcessorRegistrationDelegate {
 	public static void registerBeanPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
+		// 获取所有的BeanPostProcessor名称
 		String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
 
 		// Register BeanPostProcessorChecker that logs an info message when
 		// a bean is created during BeanPostProcessor instantiation, i.e. when
 		// a bean is not eligible for getting processed by all BeanPostProcessors.
+		// 注册BeanPostProcessorChecker，当bean在BeanPostProcessor实例化过程中创建时，
+		// 即当一个bean不适合被所有BeanPostProcessor处理时，记录一个信息消息。
 		int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
 		beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
 
+		/*
+		 * 以下操作就是把BeanPostProcessor类型区分，分别进行顺序注册
+		 */
+
 		// Separate between BeanPostProcessors that implement PriorityOrdered,
 		// Ordered, and the rest.
+		// 在实现优先排序、有序和其他的BeanPostProcessors之间进行分离。
+		// 实现PriorityOrdered接口的BeanPostProcessor集合
 		List<BeanPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
+		// MergedBeanDefinitionPostProcessor类型的BeanPostProcessor集合
 		List<BeanPostProcessor> internalPostProcessors = new ArrayList<>();
+		// 实现Order接口的BeanPostProcessor名称集合
 		List<String> orderedPostProcessorNames = new ArrayList<>();
+		// 无序BeanPostProcessor名称集合
 		List<String> nonOrderedPostProcessorNames = new ArrayList<>();
 		for (String ppName : postProcessorNames) {
 			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
@@ -236,11 +248,11 @@ final class PostProcessorRegistrationDelegate {
 			}
 		}
 
-		// First, register the BeanPostProcessors that implement PriorityOrdered.
+		// 1.注册实现PriorityOrdered接口的BeanPostProcessors
 		sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
 		registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
-		// Next, register the BeanPostProcessors that implement Ordered.
+		// 2.注册实现Ordered接口的BeanPostProcessors
 		List<BeanPostProcessor> orderedPostProcessors = new ArrayList<>(orderedPostProcessorNames.size());
 		for (String ppName : orderedPostProcessorNames) {
 			BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
@@ -252,7 +264,7 @@ final class PostProcessorRegistrationDelegate {
 		sortPostProcessors(orderedPostProcessors, beanFactory);
 		registerBeanPostProcessors(beanFactory, orderedPostProcessors);
 
-		// Now, register all regular BeanPostProcessors.
+		// 3.注册其他无序的BeanPostProcessors
 		List<BeanPostProcessor> nonOrderedPostProcessors = new ArrayList<>(nonOrderedPostProcessorNames.size());
 		for (String ppName : nonOrderedPostProcessorNames) {
 			BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
@@ -263,12 +275,14 @@ final class PostProcessorRegistrationDelegate {
 		}
 		registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors);
 
-		// Finally, re-register all internal BeanPostProcessors.
+		// 4.注册所有MergedBeanDefinitionPostProcessor类型的BeanPostProcessors
 		sortPostProcessors(internalPostProcessors, beanFactory);
 		registerBeanPostProcessors(beanFactory, internalPostProcessors);
 
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,
 		// moving it to the end of the processor chain (for picking up proxies etc).
+		// 重新注册后处理器来检测内部bean是否为ApplicationListeners监听器，
+		// 并将它移到处理器链的末端(用于拾取代理等等)。
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
 	}
 
@@ -325,6 +339,7 @@ final class PostProcessorRegistrationDelegate {
 	 * BeanPostProcessor that logs an info message when a bean is created during
 	 * BeanPostProcessor instantiation, i.e. when a bean is not eligible for
 	 * getting processed by all BeanPostProcessors.
+	 * 当bean在BeanPostProcessor实例化过程中被创建时，即当一个bean不适合被所有BeanPostProcessor处理时，记录一个信息消息。
 	 */
 	private static final class BeanPostProcessorChecker implements BeanPostProcessor {
 
@@ -346,9 +361,11 @@ final class PostProcessorRegistrationDelegate {
 
 		@Override
 		public Object postProcessAfterInitialization(Object bean, String beanName) {
+			// 不是BeanPostProcessor && 不是一个普通bean && beanFactory中的BeanPostProcessor比beanPostProcessorTargetCount小
 			if (!(bean instanceof BeanPostProcessor) && !isInfrastructureBean(beanName) &&
 					this.beanFactory.getBeanPostProcessorCount() < this.beanPostProcessorTargetCount) {
 				if (logger.isInfoEnabled()) {
+					// 不适合被所有的beanpostprocessor处理，例如:不适合自动代理
 					logger.info("Bean '" + beanName + "' of type [" + bean.getClass().getName() +
 							"] is not eligible for getting processed by all BeanPostProcessors " +
 							"(for example: not eligible for auto-proxying)");
