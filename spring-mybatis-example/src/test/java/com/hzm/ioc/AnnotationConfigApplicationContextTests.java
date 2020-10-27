@@ -1,23 +1,23 @@
 package com.hzm.ioc;
 
-import com.hzm.aware.MyApplicationContextAware;
-import com.hzm.bean.CircularReferenceBean1;
-import com.hzm.bean.CircularReferenceBean2;
-import com.hzm.bean.DemoBean1;
-import com.hzm.bean.circularReference.constructor.BeanA;
-import com.hzm.bean.circularReference.constructor.BeanB;
-import com.hzm.bean.circularReference.constructor.BeanC;
-import com.hzm.bean.circularReference.param.BeanD;
-import com.hzm.bean.initMethod.DemoBeanInitMethod;
-import com.hzm.bean.initMethod.DemoBeanInitMethodAndBean;
-import com.hzm.bean.initMethod.DemoInitializingBean;
-import com.hzm.bean.initMethod.InitBeanConfig;
-import com.hzm.bean.list.DemoBeanList;
-import com.hzm.beanFactoryPostProcessor.BeanFactoryPostProcessorConfig;
-import com.hzm.beanPostProcessor.BeanPostProcessorConfig;
-import com.hzm.config.HzmConfig;
-import com.hzm.ignore.IgnoreBean1;
-import com.hzm.ignore.IgnoreBean2;
+import com.hzm.ioc.aware.MyApplicationContextAware;
+import com.hzm.ioc.bean.CircularReferenceBean1;
+import com.hzm.ioc.bean.CircularReferenceBean2;
+import com.hzm.ioc.bean.DemoBean1;
+import com.hzm.ioc.bean.circularReference.constructor.BeanA;
+import com.hzm.ioc.bean.circularReference.constructor.BeanB;
+import com.hzm.ioc.bean.circularReference.constructor.BeanC;
+import com.hzm.ioc.bean.circularReference.param.BeanD;
+import com.hzm.ioc.bean.initMethod.DemoBeanInitMethod;
+import com.hzm.ioc.bean.initMethod.DemoBeanInitMethodAndBean;
+import com.hzm.ioc.bean.initMethod.DemoInitializingBean;
+import com.hzm.ioc.bean.initMethod.InitBeanConfig;
+import com.hzm.ioc.bean.list.DemoBeanList;
+import com.hzm.ioc.beanFactoryPostProcessor.BeanFactoryPostProcessorConfig;
+import com.hzm.ioc.beanPostProcessor.BeanPostProcessorConfig;
+import com.hzm.ioc.config.HzmConfig;
+import com.hzm.ioc.ignore.IgnoreBean1;
+import com.hzm.ioc.ignore.IgnoreBean2;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -29,6 +29,42 @@ import java.util.Arrays;
  * @date 2020年09月13日
  */
 public class AnnotationConfigApplicationContextTests {
+
+	@Test
+	public void refreshTest() {
+		//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(HzmConfig.class);
+//		GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
+//		genericBeanDefinition.setLazyInit(false);
+		// 注入类型
+//		genericBeanDefinition.setAutowireMode(BeanDefinition.);
+//		genericBeanDefinition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
+//		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+
+//		final IgnoreBean1 ignoreBean1 = context.getBean(IgnoreBean1.class);
+//		System.out.println(ignoreBean1);
+
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+		context.register(IgnoreBean1.class);
+		System.out.println("==================>register over");
+		System.out.println("==================>refresh before");
+		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+		System.out.println("==================>refresh after");
+		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+
+
+		final IgnoreBean1 ignoreBean2 = context.getBean(IgnoreBean1.class);
+		System.out.println(ignoreBean2);
+
+		final IgnoreBean2 ignoreBean3 = context.getBean(IgnoreBean2.class);
+		System.out.println(ignoreBean3);
+
+
+//		final ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+
+//		System.out.println(context.getBean("demoBean1"));
+	}
 
 	@Test
 	public void beanDefinitionTest() {

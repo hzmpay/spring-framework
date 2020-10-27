@@ -16,7 +16,7 @@
 		</property>
 	</bean>
 
-	<bean id="demoPerson" class="com.hzm.propertieConfig.DemoPerson">
+	<bean id="demoPerson" class="com.hzm.ioc.propertiesConfig.DemoPerson">
 		<property name="name" value="${person.name}"/>
 		<property name="age" value="${person.age}"/>
 	</bean>

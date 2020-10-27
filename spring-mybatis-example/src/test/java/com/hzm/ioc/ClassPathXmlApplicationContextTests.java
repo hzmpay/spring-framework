@@ -1,7 +1,7 @@
 package com.hzm.ioc;
 
-import com.hzm.bean.circularReference.constructor.BeanA;
-import com.hzm.propertieConfig.DemoPerson;
+import com.hzm.ioc.bean.circularReference.constructor.BeanA;
+import com.hzm.ioc.propertiesConfig.DemoPerson;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
