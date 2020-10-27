@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @date 2020年10月23日
  */
 @Component
-public class MyBeanPostProcessor2 implements InstantiationAwareBeanPostProcessor {
+public class MyInstantiationAwareBeanPostProcessor1 implements InstantiationAwareBeanPostProcessor {
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

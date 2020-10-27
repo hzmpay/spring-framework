@@ -3,6 +3,8 @@ package com.hzm.ignore;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 
+import javax.annotation.Resource;
+
 /**
  * @author Hezeming
  * @version 1.0
@@ -10,6 +12,9 @@ import org.springframework.context.annotation.Bean;
  */
 @Configurable
 public class IgnoreBean1 {
+
+	@Resource
+	private IgnoreBean2 ignoreBean2;
 
 	private String name;
 
@@ -23,6 +28,10 @@ public class IgnoreBean1 {
 
 	public void say() {
 		System.out.println("IgnoreBean1 name is " + name);
+	}
+
+	public void ignoreBean2Say() {
+		ignoreBean2.say();
 	}
 
 	@Bean

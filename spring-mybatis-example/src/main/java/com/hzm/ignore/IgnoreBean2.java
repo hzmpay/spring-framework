@@ -13,6 +13,10 @@ public class IgnoreBean2 {
 		System.out.println("IgnoreBean2 init");
 	}
 
+	public IgnoreBean2(String name) {
+		this.name = name;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}

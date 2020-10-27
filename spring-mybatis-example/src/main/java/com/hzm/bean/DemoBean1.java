@@ -25,4 +25,11 @@ public class DemoBean1 {
 	public void say() {
 		System.out.println(DemoBean1.class);
 	}
+
+	@Override
+	public String toString() {
+		return "DemoBean1{" +
+				"name='" + name + '\'' +
+				'}';
+	}
 }

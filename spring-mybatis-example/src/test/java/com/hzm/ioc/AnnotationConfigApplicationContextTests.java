@@ -88,11 +88,15 @@ public class AnnotationConfigApplicationContextTests {
 
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.registerBean("demoBean1", DemoBean1.class);
-		context.registerBean("demoBean2", DemoBean1.class);
-		context.registerBean("demoBean3", DemoBean1.class);
+		context.registerBean("demoBean2", DemoBean1.class, "Jeremy");
+		context.registerBean("demoBean3", DemoBean1.class, "John");
 		context.refresh();
 
-		context.getBean("demoBean1");
+		System.out.println("注册完毕========》");
+
+		System.out.println(context.getBean("demoBean1"));
+		System.out.println(context.getBean("demoBean2"));
+		System.out.println(context.getBean("demoBean3"));
 	}
 
 	@Test
@@ -192,6 +196,72 @@ public class AnnotationConfigApplicationContextTests {
 	}
 
 
+	@Test
+	public void destroyBeanTest() {
+
+		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(IgnoreBean1.class);
+		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+
+		IgnoreBean2 ignoreBean2 = context.getBean(IgnoreBean2.class);
+		System.out.println("ignoreBean2 = " + ignoreBean2);
+
+		IgnoreBean1 ignoreBean1 = context.getBean(IgnoreBean1.class);
+		System.out.println("ignoreBean1 = " + ignoreBean1);
+
+		ignoreBean1.ignoreBean2Say();
+
+		context.removeBeanDefinition("ignoreBean2");
+
+		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+
+		ignoreBean1.ignoreBean2Say();
+
+		try {
+			final IgnoreBean1 bean = context.getBean(IgnoreBean1.class);
+			System.out.println("ignoreBean1拿到了，等于 ： " + bean);
+			bean.ignoreBean2Say();
+		} catch (Exception e) {
+			System.out.println("ignoreBean1拿不到");
+		}
+
+		try {
+			ignoreBean2 = context.getBean(IgnoreBean2.class);
+		} catch (Exception e) {
+			System.out.println("ignoreBean2拿不到");
+		}
+
+
+		context.registerBean("ignoreBean2", IgnoreBean2.class, "Jeremy");
+
+		try {
+			ignoreBean2 = context.getBean(IgnoreBean2.class);
+		} catch (Exception e) {
+			System.out.println("ignoreBean2拿不到");
+		}
+
+
+		System.out.println("ignoreBean2 = " + ignoreBean2);
+		ignoreBean2.say();
+		ignoreBean1.ignoreBean2Say();
+		context.getBean(IgnoreBean1.class).ignoreBean2Say();
+
+	}
+
+	@Test
+	public void destroyBeanTest2() {
+		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(IgnoreBean1.class);
+
+		final IgnoreBean1 ignoreBean1 = context.getBean(IgnoreBean1.class);
+		final IgnoreBean1 ignoreBean2 = context.getBean(IgnoreBean1.class);
+
+		context.removeBeanDefinition("ignoreBean1");
+
+		context.registerBean("ignoreBean1", IgnoreBean1.class);
+
+		final IgnoreBean1 ignoreBean3 = context.getBean(IgnoreBean1.class);
+
+
+	}
 
 
 }
