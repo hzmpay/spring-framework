@@ -16,7 +16,7 @@ public class ClassPathXmlApplicationContextTests {
 	public void circularReferenceBeanConstructorTest() {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
 //		context.setAllowCircularReferences(false);
-		context.setConfigLocation("application-context.xml");
+		context.setConfigLocation("getBean.xml");
 		context.refresh();
 		final BeanA beanA = context.getBean(BeanA.class);
 		System.out.println(beanA);
