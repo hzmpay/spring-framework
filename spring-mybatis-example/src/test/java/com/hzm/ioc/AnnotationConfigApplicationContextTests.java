@@ -1,9 +1,7 @@
 package com.hzm.ioc;
 
 import com.hzm.ioc.aware.MyApplicationContextAware;
-import com.hzm.ioc.bean.CircularReferenceBean1;
-import com.hzm.ioc.bean.CircularReferenceBean2;
-import com.hzm.ioc.bean.DemoBean1;
+import com.hzm.ioc.bean.*;
 import com.hzm.ioc.bean.circularReference.constructor.BeanA;
 import com.hzm.ioc.bean.circularReference.constructor.BeanB;
 import com.hzm.ioc.bean.circularReference.constructor.BeanC;
@@ -296,6 +294,32 @@ public class AnnotationConfigApplicationContextTests {
 
 		final IgnoreBean1 ignoreBean3 = context.getBean(IgnoreBean1.class);
 
+	}
+
+	@Test
+	public void propertiesBeanTest() {
+		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+		context.registerBean(PropertiesBean.class);
+		context.refresh();
+
+		final PropertiesBean bean = context.getBean(PropertiesBean.class);
+		System.out.println(bean);
+		bean.say();
+
+	}
+
+	@Test
+	public void propertiesBean2Test() {
+		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+		context.registerBean(PropertiesBean.class);
+		context.registerBean(PropertiesBean2.class);
+		context.refresh();
+
+		final PropertiesBean2 bean = context.getBean(PropertiesBean2.class);
+		System.out.println(bean);
+		bean.say();
 
 	}
 

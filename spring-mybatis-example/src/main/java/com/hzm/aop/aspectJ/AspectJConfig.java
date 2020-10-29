@@ -1,5 +1,6 @@
 package com.hzm.aop.aspectJ;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -19,28 +20,39 @@ public class AspectJConfig {
 	}
 
 	@Before("point()")
-	public void before() {
-		System.out.println("point before ==========>");
+	public void before(JoinPoint proceedingJoinPoint) {
+		System.out.println("point before ==========>" + proceedingJoinPoint);
 	}
 
 	@After("point()")
-	public void after() {
-		System.out.println("point after ==========>");
+	public void after(JoinPoint proceedingJoinPoint) {
+		System.out.println("point after ==========>" + proceedingJoinPoint);
 	}
 
 	@Around("point()")
 	public Object around(ProceedingJoinPoint proceedingJoinPoint) {
-		System.out.println("point around before ==========>");
+		System.out.println("point around before ==========>" + proceedingJoinPoint);
 
 		Object object = null;
 		try {
 			object = proceedingJoinPoint.proceed();
+//			int i = 1/0;
 		} catch (Throwable throwable) {
-			throwable.printStackTrace();
+			System.out.println("发生异常：" + throwable.getMessage());
 		}
-		System.out.println("point around after ==========>");
+		System.out.println("point around after ==========>" + proceedingJoinPoint);
 		return object;
 
+	}
+
+	@AfterReturning("point()")
+	public void afterReturning(JoinPoint proceedingJoinPoint) {
+		System.out.println("point afterReturning ==========>" + proceedingJoinPoint);
+	}
+
+	@AfterThrowing(pointcut = "point()", throwing = "e")
+	public void afterThrowing(JoinPoint proceedingJoinPoint, Exception e) {
+		System.out.println("point afterThrowing ==========>" + proceedingJoinPoint + " 异常为： " + e.getMessage());
 	}
 
 }
