@@ -1,6 +1,6 @@
 package com.hzm.aop;
 
-import com.hzm.aop.aspectJ.AspectJConfig;
+import com.hzm.aop.config.AspectJConfig;
 import com.hzm.aop.bean.AspectJBean;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -15,7 +15,7 @@ public class AspectJTest {
 
 	@Test
 	public void aspectJXmlTest() {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("AspectJTest.xml");
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("aop/AspectJTest.xml");
 
 		final AspectJBean bean = context.getBean(AspectJBean.class);
 		bean.say();

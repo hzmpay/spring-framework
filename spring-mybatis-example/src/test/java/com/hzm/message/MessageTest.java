@@ -37,7 +37,7 @@ public class MessageTest {
 
 	@Test
 	public void messageSourceTest() {
-		final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ResourceBundleMessageSource.xml");
+		final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ioc/ResourceBundleMessageSource.xml");
 
 
 		final String test1 = context.getMessage("test", null, Locale.CHINA);

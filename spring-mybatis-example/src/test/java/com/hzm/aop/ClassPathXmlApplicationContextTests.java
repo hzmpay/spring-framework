@@ -1,7 +1,6 @@
-package com.hzm.ioc;
+package com.hzm.aop;
 
 import com.hzm.ioc.bean.circularReference.constructor.BeanA;
-import com.hzm.ioc.propertiesConfig.DemoPerson;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -20,18 +19,6 @@ public class ClassPathXmlApplicationContextTests {
 		context.refresh();
 		final BeanA beanA = context.getBean(BeanA.class);
 		System.out.println(beanA);
-	}
-
-	@Test
-	public void propertyPlaceholderConfigurerTest() {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ioc/PropertyPlaceholderConfigurer.xml");
-		final DemoPerson bean = context.getBean(DemoPerson.class);
-		System.out.println(bean);
-	}
-
-	@Test
-	public void beanFactoryPostProcessorTest() {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ioc/PropertyPlaceholderConfigurer.xml");
 	}
 
 }

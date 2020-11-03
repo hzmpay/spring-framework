@@ -11,7 +11,7 @@
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
-				<value>config/message</value>
+				<value>../config/message</value>
 			</list>
 		</property>
 	</bean>

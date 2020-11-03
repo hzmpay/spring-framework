@@ -1,4 +1,4 @@
-package com.hzm.aop.aspectJ;
+package com.hzm.aop.config;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
