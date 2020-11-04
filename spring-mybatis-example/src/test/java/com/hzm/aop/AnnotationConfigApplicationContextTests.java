@@ -15,6 +15,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class AnnotationConfigApplicationContextTests {
 
+	private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
 	@Test
 	public void serviceTest() {
 		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -38,6 +40,17 @@ public class AnnotationConfigApplicationContextTests {
 
 		DemoService2 bean = context.getBean(DemoService2.class);
 		bean.a();
+
+	}
+
+	@Test
+	public void methodInterceptorTest() {
+
+//		context.registerBean(DemoMethodInterceptor.class);
+//		context.refresh();
+
+
+
 
 	}
 
