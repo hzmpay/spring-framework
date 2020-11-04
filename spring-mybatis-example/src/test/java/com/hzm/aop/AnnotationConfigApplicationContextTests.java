@@ -1,8 +1,11 @@
 package com.hzm.aop;
 
 import com.hzm.aop.config.AspectJServiceConfig;
+import com.hzm.aop.config.InterceptorConfig;
+import com.hzm.aop.interceptor.DemoMethodInterceptor;
 import com.hzm.aop.service.DemoService;
 import com.hzm.aop.service.DemoService2;
+import com.hzm.aop.service.impl.DemoService3;
 import com.hzm.aop.service.impl.DemoServiceImpl;
 import com.hzm.aop.service.impl.DemoServiceImpl2;
 import org.junit.jupiter.api.Test;
@@ -46,10 +49,13 @@ public class AnnotationConfigApplicationContextTests {
 	@Test
 	public void methodInterceptorTest() {
 
-//		context.registerBean(DemoMethodInterceptor.class);
-//		context.refresh();
+		context.registerBean(DemoMethodInterceptor.class);
+		context.registerBean(InterceptorConfig.class);
+		context.registerBean(DemoService3.class);
+		context.refresh();
 
-
+		DemoService3 demoService3 = context.getBean(DemoService3.class);
+		demoService3.a();
 
 
 	}
