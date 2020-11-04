@@ -16,14 +16,8 @@
 
 package org.springframework.expression.spel.standard;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.asm.ClassWriter;
 import org.springframework.asm.MethodVisitor;
 import org.springframework.asm.Opcodes;
@@ -37,6 +31,11 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A SpelCompiler will take a regular parsed expression and create (and load) a class
@@ -210,14 +209,20 @@ public final class SpelCompiler implements Opcodes {
 	 * @return a corresponding SpelCompiler instance
 	 */
 	public static SpelCompiler getCompiler(@Nullable ClassLoader classLoader) {
-		ClassLoader clToUse = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
+//		ClassLoader clToUse = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
+//		synchronized (compilers) {
+//			SpelCompiler compiler = compilers.get(clToUse);
+//			if (compiler == null) {
+//				compiler = new SpelCompiler(clToUse);
+//				compilers.put(clToUse, compiler);
+//			}
+//			return compiler;
+//		}
+		if (classLoader == null) {
+			classLoader = ClassUtils.getDefaultClassLoader();
+		}
 		synchronized (compilers) {
-			SpelCompiler compiler = compilers.get(clToUse);
-			if (compiler == null) {
-				compiler = new SpelCompiler(clToUse);
-				compilers.put(clToUse, compiler);
-			}
-			return compiler;
+			return compilers.computeIfAbsent(classLoader, clToUse -> new SpelCompiler(clToUse));
 		}
 	}
 
