@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.annotation.Order;
 
 /**
  * @author Hezeming
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)
 @Aspect
 @ComponentScan("com.hzm.aop.service")
+@Order(1)
 public class AspectJServiceConfig {
 
 	@Pointcut("execution(* com.hzm.aop.service..*(..))")

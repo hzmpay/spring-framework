@@ -5,6 +5,7 @@ import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * @author Hezeming
@@ -12,19 +13,26 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020年11月04日
  */
 @Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class InterceptorConfig {
 
-	private static final String expression = "execution(* com.hzm.aop.service..*(..))";
+	private static final String expression = "execution(* com.hzm.aop.service..*.*(..))";
+
+//	@Bean
+//	public DemoMethodInterceptor demoMethodInterceptor() {
+//		return new DemoMethodInterceptor();
+//	}
 
 	@Bean
-	public DefaultPointcutAdvisor defaultPointcutAdvisor2(DemoMethodInterceptor demoMethodInterceptor) {
-		DefaultPointcutAdvisor pointcutAdvisor = new DefaultPointcutAdvisor();
-		AspectJExpressionPointcut aspectJExpressionPointcut = new AspectJExpressionPointcut();
+	public DefaultPointcutAdvisor defaultPointcutAdvisor2() {
+		DemoMethodInterceptor demoMethodInterceptor = new DemoMethodInterceptor();
 
+		AspectJExpressionPointcut aspectJExpressionPointcut = new AspectJExpressionPointcut();
 		aspectJExpressionPointcut.setExpression(expression);
 
-		pointcutAdvisor.setPointcut(aspectJExpressionPointcut);
+		DefaultPointcutAdvisor pointcutAdvisor = new DefaultPointcutAdvisor();
 		pointcutAdvisor.setAdvice(demoMethodInterceptor);
+		pointcutAdvisor.setPointcut(aspectJExpressionPointcut);
 		return pointcutAdvisor;
 	}
 }

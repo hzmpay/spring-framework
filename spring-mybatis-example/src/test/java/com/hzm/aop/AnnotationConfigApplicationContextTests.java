@@ -2,7 +2,6 @@ package com.hzm.aop;
 
 import com.hzm.aop.config.AspectJServiceConfig;
 import com.hzm.aop.config.InterceptorConfig;
-import com.hzm.aop.interceptor.DemoMethodInterceptor;
 import com.hzm.aop.service.DemoService;
 import com.hzm.aop.service.DemoService2;
 import com.hzm.aop.service.impl.DemoService3;
@@ -49,14 +48,43 @@ public class AnnotationConfigApplicationContextTests {
 	@Test
 	public void methodInterceptorTest() {
 
-		context.registerBean(DemoMethodInterceptor.class);
 		context.registerBean(InterceptorConfig.class);
 		context.registerBean(DemoService3.class);
+		context.registerBean(DemoServiceImpl.class);
 		context.refresh();
 
 		DemoService3 demoService3 = context.getBean(DemoService3.class);
 		demoService3.a();
 
+		System.out.println("分割线 ==========>");
+		DemoService demoService = context.getBean(DemoService.class);
+		demoService.b();
+
+	}
+
+	/**
+	 * 比较MethodInterceptor和@AspectJ优先级
+	 * 结论：默认MethodInterceptor优先，除非指定Order
+	 *
+	 * @param
+	 * @return void
+	 * @author Hezeming
+	 */
+	@Test
+	public void aspectJAndMethodInterceptorTest() {
+
+		context.registerBean(AspectJServiceConfig.class);
+		context.registerBean(InterceptorConfig.class);
+		context.registerBean(DemoService3.class);
+		context.registerBean(DemoServiceImpl.class);
+		context.refresh();
+
+		DemoService3 demoService3 = context.getBean(DemoService3.class);
+		demoService3.a();
+
+		System.out.println("分割线 ==========>");
+		DemoService demoService = context.getBean(DemoService.class);
+		demoService.b();
 
 	}
 
