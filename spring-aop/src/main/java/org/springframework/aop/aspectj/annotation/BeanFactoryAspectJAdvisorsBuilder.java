@@ -43,6 +43,9 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 	private final AspectJAdvisorFactory advisorFactory;
 
+	/**
+	 * @AspectJ注解注释过的beanName
+	 */
 	@Nullable
 	private volatile List<String> aspectBeanNames;
 
@@ -76,6 +79,10 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * Look for AspectJ-annotated aspect beans in the current bean factory,
 	 * and return to a list of Spring AOP Advisors representing them.
 	 * <p>Creates a Spring Advisor for each AspectJ advice method.
+	 *
+	 * 在当前的bean工厂中寻找带有aspectj注释的方面bean，然后返回表示这些bean的Spring AOP Advisors列表。
+	 * 为每个AspectJ通知方法创建一个Spring Advisor。
+	 *
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
@@ -107,16 +114,20 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						// beanType是否存在@Aspect注解
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
+							// 构造AspectJ元数据对象
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
+							// @Aspect的value值为SINGLETON
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
 								// 解析标记AspectJ注解中的增强方法
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
+									// bean是单例直接put缓存
 									this.advisorsCache.put(beanName, classAdvisors);
 								}
 								else {
+									// 不是单例则缓存工厂
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);
@@ -129,6 +140,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 								}
 								MetadataAwareAspectInstanceFactory factory =
 										new PrototypeAspectInstanceFactory(this.beanFactory, beanName);
+								// 缓存工厂
 								this.aspectFactoryCache.put(beanName, factory);
 								advisors.addAll(this.advisorFactory.getAdvisors(factory));
 							}
@@ -145,6 +157,8 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		}
 		List<Advisor> advisors = new ArrayList<>();
 		for (String aspectName : aspectNames) {
+			// 一个beanName对应bean中可能设置了多处增强：
+			// 比如：@Before，@After，@Around
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
 			if (cachedAdvisors != null) {
 				advisors.addAll(cachedAdvisors);
