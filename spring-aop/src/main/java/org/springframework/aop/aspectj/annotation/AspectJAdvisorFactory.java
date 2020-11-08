@@ -16,15 +16,14 @@
 
 package org.springframework.aop.aspectj.annotation;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.aopalliance.aop.Advice;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.lang.Nullable;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Interface for factories that can create Spring AOP Advisors from classes
@@ -64,6 +63,9 @@ public interface AspectJAdvisorFactory {
 	/**
 	 * Build Spring AOP Advisors for all annotated At-AspectJ methods
 	 * on the specified aspect instance.
+	 *
+	 * 为所有标识了@AspectJ类型注解的所有方法构建List<Advisor>
+	 *
 	 * @param aspectInstanceFactory the aspect instance factory
 	 * (not the aspect instance itself in order to avoid eager instantiation)
 	 * @return a list of advisors for this class
