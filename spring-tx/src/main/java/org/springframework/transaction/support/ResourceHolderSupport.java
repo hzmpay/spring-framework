@@ -16,10 +16,10 @@
 
 package org.springframework.transaction.support;
 
-import java.util.Date;
-
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.TransactionTimedOutException;
+
+import java.util.Date;
 
 /**
  * Convenient base class for resource holders.
@@ -159,6 +159,7 @@ public abstract class ResourceHolderSupport implements ResourceHolder {
 	/**
 	 * Increase the reference count by one because the holder has been requested
 	 * (i.e. someone requested the resource held by it).
+	 * 将引用计数增加1，因为holder已经被请求(例如，有人请求了它所拥有的资源)。
 	 */
 	public void requested() {
 		this.referenceCount++;

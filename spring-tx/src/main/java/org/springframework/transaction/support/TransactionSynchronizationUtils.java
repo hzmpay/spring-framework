@@ -16,16 +16,15 @@
 
 package org.springframework.transaction.support;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.aop.scope.ScopedObject;
 import org.springframework.core.InfrastructureProxy;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+
+import java.util.List;
 
 /**
  * Utility methods for triggering specific {@link TransactionSynchronization}
@@ -57,6 +56,7 @@ public abstract class TransactionSynchronizationUtils {
 	/**
 	 * Unwrap the given resource handle if necessary; otherwise return
 	 * the given handle as-is.
+	 * 必要时展开给定资源句柄;否则按原样返回给定的句柄。
 	 * @see org.springframework.core.InfrastructureProxy#getWrappedObject()
 	 */
 	static Object unwrapResourceIfNecessary(Object resource) {

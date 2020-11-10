@@ -16,21 +16,19 @@
 
 package org.springframework.jdbc.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Helper class that provides static methods for obtaining JDBC Connections from
@@ -93,6 +91,12 @@ public abstract class DataSourceUtils {
 	 * when using {@link DataSourceTransactionManager}. Will bind a Connection to the thread
 	 * if transaction synchronization is active (e.g. if in a JTA transaction).
 	 * <p>Directly accessed by {@link TransactionAwareDataSourceProxy}.
+	 *
+	 * 实际从给定数据源获取JDBC连接。与getConnection相同，但是抛出原始的SQLException异常。
+	 * 能够识别绑定到当前线程的相应连接，例如在使用DataSourceTransactionManager时。
+	 * 如果事务同步处于活动状态(例如在JTA事务中)，将绑定一个连接到线程。
+	 * 通过TransactionAwareDataSourceProxy直接访问。
+	 *
 	 * @param dataSource the DataSource to obtain Connections from
 	 * @return a JDBC Connection from the given DataSource
 	 * @throws SQLException if thrown by JDBC methods
@@ -115,10 +119,12 @@ public abstract class DataSourceUtils {
 		logger.debug("Fetching JDBC Connection from DataSource");
 		Connection con = fetchConnection(dataSource);
 
+		// 存在事务
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			try {
 				// Use same Connection for further JDBC actions within the transaction.
 				// Thread-bound object will get removed by synchronization at transaction completion.
+				// 对事务中的进一步JDBC操作使用相同的连接。线程绑定对象将在事务完成时通过同步移除。
 				ConnectionHolder holderToUse = conHolder;
 				if (holderToUse == null) {
 					holderToUse = new ConnectionHolder(con);
@@ -126,6 +132,7 @@ public abstract class DataSourceUtils {
 				else {
 					holderToUse.setConnection(con);
 				}
+				// 记录引用数
 				holderToUse.requested();
 				TransactionSynchronizationManager.registerSynchronization(
 						new ConnectionSynchronization(holderToUse, dataSource));
@@ -384,6 +391,8 @@ public abstract class DataSourceUtils {
 			ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
 			if (conHolder != null && connectionEquals(conHolder, con)) {
 				// It's the transactional Connection: Don't close it.
+				// 如果当前线程存在事务，说明存在共用数据库连接
+				// 调用ConnectionHolder中的released方法连接数减1，不去真正释放连接
 				conHolder.released();
 				return;
 			}

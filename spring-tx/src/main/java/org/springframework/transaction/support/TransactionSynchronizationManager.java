@@ -16,21 +16,14 @@
 
 package org.springframework.transaction.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * Central delegate that manages resources and transaction synchronizations per thread.
@@ -132,6 +125,9 @@ public abstract class TransactionSynchronizationManager {
 	 * @param key the key to check (usually the resource factory)
 	 * @return a value bound to the current thread (usually the active
 	 * resource object), or {@code null} if none
+	 *
+	 * 检索绑定到当前线程的给定键的资源。
+	 *
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 */
 	@Nullable

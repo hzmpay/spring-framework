@@ -16,27 +16,6 @@
 
 package org.springframework.jdbc.core;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.BatchUpdateException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.dao.support.DataAccessUtils;
@@ -52,6 +31,14 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
+
+import javax.sql.DataSource;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.sql.*;
+import java.util.*;
 
 /**
  * <b>This is the central class in the JDBC core package.</b>
@@ -111,6 +98,8 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 	/**
 	 * If this variable is set to a non-negative value, it will be used for setting the
 	 * fetchSize property on statements used for query processing.
+	 *
+	 * 如果该变量被设置为非负值，那么它将用于在用于查询处理的语句上设置fetchSize属性。
 	 */
 	private int fetchSize = -1;
 
@@ -613,6 +602,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		PreparedStatement ps = null;
 		try {
 			ps = psc.createPreparedStatement(con);
+			// 设置参数
 			applyStatementSettings(ps);
 			T result = action.doInPreparedStatement(ps);
 			handleWarnings(ps);
@@ -621,6 +611,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
+			// 释放数据库连接，避免当 异常转换器没有被初始化的时候出现潜在的连接池死锁
 			if (psc instanceof ParameterDisposer) {
 				((ParameterDisposer) psc).cleanupParameters();
 			}

@@ -697,7 +697,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found.
-		// 如果当前BeanFactory包含loadTimeWeaver Bean，说明存在类加载期织入AspectJ，
+		// 如果当前BeanFactory包含loadTimeWeaver Bean，说明存在类加载期织入AspectJ（静态代理），
 		// 则把当前BeanFactory交给类加载期BeanPostProcessor实现类LoadTimeWeaverAwareProcessor来处理，从而实现类加载期织入AspectJ的目的。
 		if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 			beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
