@@ -551,7 +551,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
 		// 急切地缓存单例（三级缓存），以便能够解决循环引用，即使是被生命周期接口(如BeanFactoryAware)触发。
-		// 是否单例 && 循环依赖开关是否开启 && 当前的bean是否在创建中，检测循环依赖（创建中说明已经加入到缓存了）
+		// 是否单例 && 循环依赖开关是否开启 && 当前的bean是否在创建中，检测循环依赖（创建中说明发生了循环依赖）
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -1124,6 +1124,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * <p>Any returned object will be used as the bean instead of actually instantiating
 	 * the target bean. A {@code null} return value from the post-processor will
 	 * result in the target bean being instantiated.
+	 *
+	 * 将InstantiationAwareBeanPostProcessors到指定的bean定义(通过类和名称)，并且调用它们的postProcessBeforeInstantiation方法。
+	 * 任何返回的对象都将被用作bean，而不是实际实例化目标bean。来自后处理程序的空返回值将导致目标bean被实例化。
+	 *
 	 * @param beanClass the class of the bean to be instantiated
 	 * @param beanName the name of the bean
 	 * @return the bean object to use instead of a default instance of the target bean, or {@code null}
@@ -1393,6 +1397,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Give any InstantiationAwareBeanPostProcessors the opportunity to modify the
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
+		// 让一些InstantiationAwareBeanPostProcessor在属性设置之前有机会修改bean的状态。例如，这可以用来支持字段注入的样式。
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {

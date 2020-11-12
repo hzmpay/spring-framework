@@ -230,7 +230,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		/*
 		 * 检查缓存中或者实例工厂中是否有对应的实例
 		 * 为什么首先会使用这段代码呢?
-		 * 因为在创建单例bean的时候会存在依赖注人的情况，而在创建依赖的时候为了避免循环依赖，
+		 * 因为在创建单例bean的时候会存在依赖注入的情况，而在创建依赖的时候为了避免循环依赖，
 		 * Spring创建bean的原则是不等bean创建完成就会将创建bean的ObjectFactory提早曝光
 		 * 也就是将objectFactory加入到缓存中，一旦下个bean创建时候需要依赖上个bean则直接使用ObjectFactory
 		 */
@@ -258,8 +258,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// 单例缓存中不存在的情况可能是：
 			// 1.原型模式，存在循环下面判断为true
-			// 2.单例模式但是第一次创建，下面判断判断为false
 			// 如果我们在当前线程中已经创建过这个bean实例（说明在循环引用中。），则会失败
+			// 2.单例模式但是第一次创建，下面判断判断为false
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}

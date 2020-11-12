@@ -7,5 +7,4 @@ package com.hzm.mybatis.util;
  */
 public class MybatisUtil {
 
-
 }
