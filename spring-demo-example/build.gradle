@@ -14,6 +14,7 @@ repositories {
 dependencies {
     compile(project(":spring-context"))
     compile(project(":spring-tx"))
+    compile(project(":spring-webmvc"))
 
     optional("org.aspectj:aspectjweaver")
 
@@ -23,5 +24,6 @@ dependencies {
 
     testCompile(testFixtures(project(":spring-context")))
     testCompile(testFixtures(project(":spring-tx")))
+    testCompile(testFixtures(project(":spring-webmvc")))
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
