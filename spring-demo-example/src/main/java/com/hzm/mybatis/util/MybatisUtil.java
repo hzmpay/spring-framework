@@ -7,4 +7,8 @@ package com.hzm.mybatis.util;
  */
 public class MybatisUtil {
 
+	public static void main(String[] args) {
+
+	}
+
 }

@@ -1,5 +1,7 @@
 package com.hzm;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 /**
  * @author Hezeming
  * @version 1.0
