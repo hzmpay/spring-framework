@@ -16,19 +16,8 @@
 
 package org.springframework.web.context.request.async;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.SyncTaskExecutor;
@@ -36,6 +25,15 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult.DeferredResultHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * The central class for managing asynchronous request processing, mainly intended
@@ -138,6 +136,10 @@ public final class WebAsyncManager {
 	 * of "false" means concurrent handling was either not started or possibly
 	 * that it has completed and the request was dispatched for further
 	 * processing of the concurrent result.
+	 *
+	 * 为当前请求选择的处理程序是否选择异步处理请求。
+	 * 返回值“true”表示正在进行并发处理，并且响应将保持打开状态。
+	 * 返回值为“false”意味着并发处理没有启动，或者可能已经完成，请求被分派以进一步处理并发结果。
 	 */
 	public boolean isConcurrentHandlingStarted() {
 		return (this.asyncWebRequest != null && this.asyncWebRequest.isAsyncStarted());

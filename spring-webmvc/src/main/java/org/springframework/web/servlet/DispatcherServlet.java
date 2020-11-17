@@ -1025,20 +1025,27 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				// 检查request是否是Multipart上传文件请求
+				// 是的话进行MultipartHttpServletRequest类型解析转换
 				processedRequest = checkMultipart(request);
+				// request经过MultipartHttpServletRequest转换
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
+				// 根据request找到从处理器映射器中找到对应的处理器
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
+					// 找不到处理器直接返回404
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				// Determine handler adapter for the current request.
+				// 根据这个处理器获得对应的处理适配器
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
+				// 检查是否当前request是否用了Last-Modified处理（通知页面缓存）
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
@@ -1048,18 +1055,23 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				// 处理所有拦截器的PreHandle方法和回调
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// Actually invoke the handler.
+				// 实际调用处理，Controller处理
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
+				// 当前请求是否用了异步处理模型，并且处于并发处理中
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
 
+				// 给mv设置返回视图信息，并处理前后缀名
 				applyDefaultViewName(processedRequest, mv);
+				// 处理所有拦截器的PostHandle方法
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1070,6 +1082,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
+			// 处理返回结果
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -1130,7 +1143,9 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		// Did the handler return a view to render?
+		// 返回view的话需要做页面处理
 		if (mv != null && !mv.wasCleared()) {
+			// 处理页面跳转
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
@@ -1149,6 +1164,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		if (mappedHandler != null) {
 			// Exception (if any) is already handled..
+			// 执行所有拦截器的afterCompletion方法
 			mappedHandler.triggerAfterCompletion(request, response, null);
 		}
 	}
@@ -1179,7 +1195,9 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @see MultipartResolver#resolveMultipart
 	 */
 	protected HttpServletRequest checkMultipart(HttpServletRequest request) throws MultipartException {
+		// 文件解析器不为空 && 当前请求类型是multipart文件上传
 		if (this.multipartResolver != null && this.multipartResolver.isMultipart(request)) {
+			// 当前request是MultipartHttpServletRequest类型
 			if (WebUtils.getNativeRequest(request, MultipartHttpServletRequest.class) != null) {
 				if (request.getDispatcherType().equals(DispatcherType.REQUEST)) {
 					logger.trace("Request already resolved to MultipartHttpServletRequest, e.g. by MultipartFilter");
@@ -1190,6 +1208,7 @@ public class DispatcherServlet extends FrameworkServlet {
 						"skipping re-resolution for undisturbed error rendering");
 			}
 			else {
+				// 把request解析成MultipartHttpServletRequest类型
 				try {
 					return this.multipartResolver.resolveMultipart(request);
 				}

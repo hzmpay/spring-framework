@@ -16,21 +16,19 @@
 
 package org.springframework.web.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.lang.Nullable;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 
 /**
  * Helper class for URL path matching. Provides support for URL paths in
@@ -165,10 +163,12 @@ public class UrlPathHelper {
 	 */
 	public String getLookupPathForRequest(HttpServletRequest request) {
 		// Always use full path within current servlet context?
+		// 总是在当前ServletContext中使用全路径
 		if (this.alwaysUseFullPath) {
 			return getPathWithinApplication(request);
 		}
 		// Else, use path within current servlet mapping if applicable
+		// 否则，在当前servlet映射中使用path(如果适用的话)
 		String rest = getPathWithinServletMapping(request);
 		if (!"".equals(rest)) {
 			return rest;
@@ -203,6 +203,11 @@ public class UrlPathHelper {
 	 * i.e. the part of the request's URL beyond the part that called the servlet,
 	 * or "" if the whole URL has been used to identify the servlet.
 	 * <p>Detects include request URL if called within a RequestDispatcher include.
+	 *
+	 * 返回给定请求的servlet映射中的路径，即请求的URL的一部分超出了调用servlet的部分，
+	 * 或者“”如果整个URL已被用于识别servlet。
+	 * 检测如果在RequestDispatcher include中调用包括请求URL。
+	 *
 	 * <p>E.g.: servlet mapping = "/*"; request URI = "/test/a" -> "/test/a".
 	 * <p>E.g.: servlet mapping = "/"; request URI = "/test/a" -> "/test/a".
 	 * <p>E.g.: servlet mapping = "/test/*"; request URI = "/test/a" -> "/a".
