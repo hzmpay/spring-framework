@@ -130,7 +130,9 @@ public class ContextLoader {
 	 */
 	private static final String DEFAULT_STRATEGIES_PATH = "ContextLoader.properties";
 
-
+	/**
+	 * 初始化静态方法中会读取资源文件ContextLoader.properties
+	 */
 	private static final Properties defaultStrategies;
 
 	static {
@@ -275,7 +277,7 @@ public class ContextLoader {
 			// Store context in local instance variable, to guarantee that
 			// it is available on ServletContext shutdown.
 			if (this.context == null) {
-				// 2.创建一个WebApplicationContext并保存到context属性
+				// 2.根据servletContext上下文创建一个WebApplicationContext并保存到context属性
 				this.context = createWebApplicationContext(servletContext);
 			}
 			if (this.context instanceof ConfigurableWebApplicationContext) {
@@ -283,9 +285,11 @@ public class ContextLoader {
 				if (!cwac.isActive()) {
 					// The context has not yet been refreshed -> provide services such as
 					// setting the parent context, setting the application context id, etc
+					// 上下文还没有被刷新——>提供了诸如设置父上下文、设置应用程序上下文id等服务
 					if (cwac.getParent() == null) {
 						// The context instance was injected without an explicit parent ->
 						// determine parent for root web application context, if any.
+						// 注入上下文实例时没有显式父元素 -> 如果有的话，请确定根web应用程序上下文的父元素。
 						ApplicationContext parent = loadParentContext(servletContext);
 						cwac.setParent(parent);
 					}
@@ -342,6 +346,9 @@ public class ContextLoader {
 	/**
 	 * Return the WebApplicationContext implementation class to use, either the
 	 * default XmlWebApplicationContext or a custom context class if specified.
+	 *
+	 * 返回要使用的WebApplicationContext实现类，默认的XmlWebApplicationContext或者指定的自定义上下文类。
+	 *
 	 * @param servletContext current servlet context
 	 * @return the WebApplicationContext implementation class to use
 	 * @see #CONTEXT_CLASS_PARAM

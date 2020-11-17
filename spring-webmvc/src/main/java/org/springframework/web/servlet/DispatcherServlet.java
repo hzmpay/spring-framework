@@ -280,7 +280,10 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 	}
 
-	/** Detect all HandlerMappings or just expect "handlerMapping" bean?. */
+	/**
+	 * Detect all HandlerMappings or just expect "handlerMapping" bean?.
+	 * 检测所有handlerMapping还是只期望检测beanName为"handlerMapping"的bean?
+	 */
 	private boolean detectAllHandlerMappings = true;
 
 	/** Detect all HandlerAdapters or just expect "handlerAdapter" bean?. */
@@ -503,7 +506,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		initRequestToViewNameTranslator(context);
 		// 初始化视图转换器
 		initViewResolvers(context);
-		// 初始化Flashmap管理器
+		// 初始化FlashMap管理器
+		// （请求存储使用，供其他请求使用，比如在重定向之前缓存数据，重定向之后还能使用，并立即删除）
 		initFlashMapManager(context);
 	}
 
@@ -656,6 +660,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Ensure we have at least some HandlerAdapters, by registering
 		// default HandlerAdapters if no other adapters are found.
+		// 通过注册，确保我们至少有一些HandlerAdapter
+		// 如果没有找到其他适配器，则默认处理适配器。
 		if (this.handlerAdapters == null) {
 			this.handlerAdapters = getDefaultStrategies(context, HandlerAdapter.class);
 			if (logger.isTraceEnabled()) {
@@ -917,6 +923,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Keep a snapshot of the request attributes in case of an include,
 		// to be able to restore the original attributes after the include.
+		// 保留包含时请求属性的快照，以便能够在包含后恢复原始属性
 		Map<String, Object> attributesSnapshot = null;
 		if (WebUtils.isIncludeRequest(request)) {
 			attributesSnapshot = new HashMap<>();
@@ -928,6 +935,10 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 			}
 		}
+
+		/*
+		 * 将一系列组件设置到request域中
+		 */
 
 		// Make framework objects available to handlers and view objects.
 		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());

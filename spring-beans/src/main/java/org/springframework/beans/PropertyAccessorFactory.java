@@ -21,6 +21,8 @@ package org.springframework.beans;
  * in particular for {@link BeanWrapper} instances. Conceals the actual
  * target implementation classes and their extended public signature.
  *
+ * 获取PropertyAccessor实例的简单工厂外观，特别是BeanWrapper实例。隐藏实际的目标实现类及其扩展的公共签名。
+ *
  * @author Juergen Hoeller
  * @since 2.5.2
  */

@@ -214,7 +214,10 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	/** If the WebApplicationContext was injected via {@link #setApplicationContext}. */
 	private boolean webApplicationContextInjected = false;
 
-	/** Flag used to detect whether onRefresh has already been called. */
+	/**
+	 * Flag used to detect whether onRefresh has already been called.
+	 * 用于检测是否已调用onRefresh的标志，在refresh()的finishRefresh()中发布ContextRefreshedEvent事件修改标识
+	 */
 	private volatile boolean refreshEventReceived = false;
 
 	/** Monitor for synchronized onRefresh execution. */
@@ -558,7 +561,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		// 声明子容器
 		WebApplicationContext wac = null;
 
-		// 建立父子容器的关联关系
+		// 不为空说明已经通过构造函数初始化过了
 		if (this.webApplicationContext != null) {
 			// A context instance was injected at construction time -> use it
 			// 在构造时注入了一个上下文实例——>使用它
@@ -580,15 +583,18 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 				}
 			}
 		}
-		// 先去ServletContext中查找Web容器的引用是否存在，并创建好默认的空IoC容器
+		// 先去ServletContext中查找Web容器是否存在
 		if (wac == null) {
 			// No context instance was injected at construction time -> see if one
 			// has been registered in the servlet context. If one exists, it is assumed
 			// that the parent context (if any) has already been set and that the
 			// user has performed any initialization such as setting the context id
+			// 在构造时没有注入上下文实例->
+			// 查看是否已经在servlet上下文中注册了一个。
+			// 如果存在，则假定父上下文(如果有的话)已经设置，并且用户已经执行了任何初始化，比如设置上下文id
 			wac = findWebApplicationContext();
 		}
-		// 给上一步创建好的IOC容器赋值
+		// 如果ServletContext中也不存在则进行创建
 		if (wac == null) {
 			// No context instance is defined for this servlet -> create a local one
 			// 创建WebApplicationContext并进行refresh，启动IOC，
@@ -596,6 +602,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			wac = createWebApplicationContext(rootContext);
 		}
 
+		// 如果还未检测到上下文刷新事件则进行手动刷新mvc组件
+		// （IOC的refresh()的finishRefresh()中会发布ContextRefreshedEvent事件去做这个操作）
 		if (!this.refreshEventReceived) {
 			// Either the context is not a ConfigurableApplicationContext with refresh
 			// support or the context injected at construction time had already been
@@ -820,6 +828,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * This method will be invoked after any bean properties have been set and
 	 * the WebApplicationContext has been loaded. The default implementation is empty;
 	 * subclasses may override this method to perform any initialization they require.
+	 *
+	 * 在设置了任何bean属性并加载了WebApplicationContext之后，将调用此方法。默认实现为空;子类可以重写此方法来执行它们需要的任何初始化。
+	 *
 	 * @throws ServletException in case of an initialization exception
 	 */
 	protected void initFrameworkServlet() throws ServletException {
