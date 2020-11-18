@@ -9,5 +9,5 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class BaseTest {
 
-	private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+	protected AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 }
