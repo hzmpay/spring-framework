@@ -520,11 +520,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// 2.创建并刷新BeanFactory返回
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// 3.配置工厂的标准上下文特征，例如：上下文的类加载器和后处理器。
+			// 3.配置工厂的标准上下文特征，
+			// 例如：上下文的类加载器和添加一些Spring本身需要的后处理器。
 			prepareBeanFactory(beanFactory);
 
 			try {
-				// 4.允许在context子类中对bean工厂进行创建后置处理。比如：注册WEB相关信息
+				// 4.允许在context子类中对bean工厂进行创建后置处理。
+				// 比如：注册WEB相关信息，添加BeanPostProcessor
 				postProcessBeanFactory(beanFactory);
 
 				// 5.调用上下文中注册类型为BeanFactoryPostProcessor的bean
