@@ -15,17 +15,19 @@ dependencies {
     compile(project(":spring-context"))
     compile(project(":spring-tx"))
     compile(project(":spring-webmvc"))
+    // https://mvnrepository.com/artifact/org.mybatis/mybatis-spring
+    compile('org.mybatis:mybatis-spring:2.0.6')
     compileOnly("javax.servlet:javax.servlet-api")
+//    compileOnly('org.projectlombok:lombok:1.18.20')
+//    annotationProcessor('org.projectlombok:lombok:1.18.20')
 
     optional("org.aspectj:aspectjweaver")
-
-    // https://mvnrepository.com/artifact/org.mybatis/mybatis-spring
-    compile group: 'org.mybatis', name: 'mybatis-spring', version: '2.0.5'
 
 
     testCompile(testFixtures(project(":spring-context")))
     testCompile(testFixtures(project(":spring-tx")))
     testCompile(testFixtures(project(":spring-webmvc")))
     testCompile("javax.servlet:javax.servlet-api")
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+//    testCompileOnly('org.projectlombok:lombok:1.18.20')
+//    testAnnotationProcessor('org.projectlombok:lombok:1.18.20')
 }
